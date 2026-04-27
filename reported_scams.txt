@@ -1,0 +1,15 @@
+
+=======================================================
+Reported At  : 2026-04-27 20:28:24
+Label        : Suspicious (40/100)
+Scam Type    : Payment Fraud
+Rule / Domain / ML : 80 / 0 / 2
+Message      :
+Earn ₹5000/day from home! No experience needed. WhatsApp 9123456789. Only 3 slots. 100% guaranteed income!
+Reasons      :
+  · Suspicious word detected: "earn"
+  · Suspicious word detected: "₹"
+  · Suspicious word detected: "no experience"
+  · Contains Indian mobile number (possible vishing attempt)
+  · Specific money amount mentioned
+  · Uses guarantee language ("100%", "guaranteed")
