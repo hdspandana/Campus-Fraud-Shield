@@ -14,4 +14,3 @@ def decide(score: int) -> tuple[str, str, str]:
  
 def get_score_color(label: str) -> str:
     return {"Safe": "#22c55e", "Suspicious": "#f59e0b", "Scam": "#ef4444"}.get(label, "#6b7280")
- 

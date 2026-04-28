@@ -13,3 +13,55 @@ Reasons      :
   · Contains Indian mobile number (possible vishing attempt)
   · Specific money amount mentioned
   · Uses guarantee language ("100%", "guaranteed")
+
+=======================================================
+Reported At  : 2026-04-27 22:30:57
+Label        : Suspicious (31/100)
+Scam Type    : Phishing Attack
+Rule / Domain / ML : 60 / 0 / 5
+Message      :
+Google Account: Unusual sign-in blocked. Verify password at google-security-check.ml to restore access.
+Reasons      :
+  · Suspicious word detected: "verify"
+  · Suspicious word detected: "password"
+  · Asks for sensitive info: "password"
+
+=======================================================
+Reported At  : 2026-04-28 15:59:24
+Label        : Suspicious (38/100)
+Scam Type    : Phishing Attack
+Rule / Domain / ML : 75 / 0 / 5
+Message      :
+HDFC Alert: Suspicious login detected. Update KYC now at hdfc-kyc-update.xyz or account suspended in 24 hrs.
+Reasons      :
+  · Suspicious word detected: "rs."
+  · Suspicious word detected: "account suspended"
+  · Suspicious word detected: "kyc"
+  · All-caps shouting detected: HDFC
+
+=======================================================
+Reported At : 2026-04-28 18:56:17
+Source      : ✍️ Text
+Label       : Suspicious (54/100)
+Scam Type   : Payment Fraud
+Message     :
+Your UPI PIN has expired. Re-enter PIN and bank account at bit.ly/upi-renew to continue transactions.
+Reasons     :
+  · Suspicious word detected: "upi"
+  · Short/masked link found (bit.ly)
+  · Asks for sensitive info: "bank account"
+  · Asks for sensitive info: "pin"
+  · Short/masked link detected (bit.ly) — hides real destination
+
+=======================================================
+Reported At : 2026-04-28 22:11:11
+Source      : ✍️ Text
+Label       : Suspicious (38/100)
+Scam Type   : Phishing Attack
+Message     :
+HDFC Alert: Suspicious login detected. Update KYC now at hdfc-kyc-update.xyz or account suspended in 24 hrs.
+Reasons     :
+  · Suspicious word detected: "rs."
+  · Suspicious word detected: "account suspended"
+  · Suspicious word detected: "kyc"
+  · All-caps shouting detected: HDFC
