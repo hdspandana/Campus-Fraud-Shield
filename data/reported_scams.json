@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "text": "Earn ₹5000/day from home! No experience needed. WhatsApp 9123456789. 100% guaranteed income!",
+    "label": "Suspicious",
+    "score": 52,
+    "scam_type": "Payment Fraud",
+    "reasons": [
+      "🔴 Suspicious keyword: \"earn\"",
+      "🔴 Suspicious keyword: \"guaranteed\"",
+      "🔴 Suspicious keyword: \"100%\"",
+      "🔴 Suspicious keyword: \"no experience\"",
+      "📱 Contains Indian mobile number (possible vishing)",
+      "💰 Specific money amount mentioned",
+      "⚠️ Uses guarantee language (\"100%\", \"guaranteed\")"
+    ],
+    "source": "✍️ Text",
+    "timestamp": "2026-04-30T17:49:03.720419"
+  },
+  {
+    "id": 2,
+    "text": "This app gives 3x returns in 7 days! I earned ₹15000. Join: bit.ly/earn3x",
+    "label": "Suspicious",
+    "score": 46,
+    "scam_type": "Payment Fraud",
+    "reasons": [
+      "🔴 Suspicious keyword: \"earn\"",
+      "🔴 Suspicious keyword: \"3x returns\"",
+      "🔗 Short/masked link (bit.ly) — hides real destination",
+      "💰 Specific money amount mentioned",
+      "🔗 Short/masked link (bit.ly) hides real URL"
+    ],
+    "source": "✍️ Text",
+    "timestamp": "2026-04-30T21:55:16.591688"
+  },
+  {
+    "id": 3,
+    "text": "URGENT! Pay ₹999 registration fee via GPay to confirm your Google internship. Limited slots!!!",
+    "label": "Suspicious",
+    "score": 49,
+    "scam_type": "Payment Fraud",
+    "reasons": [
+      "🔴 Suspicious keyword: \"urgent\"",
+      "🔴 Suspicious keyword: \"confirm your\"",
+      "🔴 Suspicious keyword: \"gpay\"",
+      "🔴 Suspicious keyword: \"registration fee\"",
+      "❗ Excessive urgency punctuation (!!!)",
+      "📢 All-caps shouting: URGENT",
+      "💰 Specific money amount mentioned"
+    ],
+    "source": "✍️ Text",
+    "timestamp": "2026-05-04T20:14:11.593909"
+  },
+  {
+    "id": 4,
+    "text": "Your SBI account is BLOCKED! Verify Aadhar + OTP at sbi-secure-login.tk immediately.",
+    "label": "Suspicious",
+    "score": 48,
+    "scam_type": "Phishing Attack",
+    "reasons": [
+      "🔴 Suspicious keyword: \"immediately\"",
+      "🔴 Suspicious keyword: \"otp\"",
+      "🔴 Suspicious keyword: \"verify\"",
+      "🔴 Suspicious keyword: \"aadhar\"",
+      "📢 All-caps shouting: BLOCKED",
+      "🔐 Requests sensitive info: \"aadhar\"",
+      "🔐 Requests sensitive info: \"otp\""
+    ],
+    "source": "✍️ Text",
+    "timestamp": "2026-05-04T21:25:30.633066"
+  }
+]
