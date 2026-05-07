@@ -1,0 +1,675 @@
+{
+  "internship_platforms": {
+    "internshala": {
+      "official_domains": ["internshala.com"],
+      "official_emails": ["@internshala.com"],
+      "fee_policy": "never_charges_registration_fee",
+      "max_legitimate_fee": 0,
+      "contact_policy": {
+        "uses": ["internshala.com", "@internshala.com"],
+        "never_uses": [
+          "@gmail.com", "@yahoo.com", "@hotmail.com",
+          "WhatsApp only", "Telegram", "personal mobile",
+          "Paytm personal", "PhonePe personal"
+        ]
+      },
+      "known_process": [
+        "student applies on internshala.com",
+        "employer reviews application",
+        "employer contacts student via internshala chat",
+        "interview conducted",
+        "offer given on platform"
+      ],
+      "scam_patterns": [
+        "selection_without_interview",
+        "registration_fee_demand",
+        "payment_via_paytm_phonepe",
+        "contact_via_whatsapp_only",
+        "gmail_contact_claiming_internshala"
+      ],
+      "real_stipend_range": "Rs.2000 to Rs.50000 per month",
+      "never_does": [
+        "ask for registration fee",
+        "contact only via WhatsApp",
+        "use gmail for official communication",
+        "ask for security deposit",
+        "select without interview"
+      ],
+      "category": "internship_platform",
+      "keywords": ["internshala", "internship", "stipend"]
+    },
+    "letsintern": {
+      "official_domains": ["letsintern.com"],
+      "official_emails": ["@letsintern.com"],
+      "fee_policy": "never_charges_registration_fee",
+      "max_legitimate_fee": 0,
+      "contact_policy": {
+        "uses": ["letsintern.com", "@letsintern.com"],
+        "never_uses": [
+          "@gmail.com", "WhatsApp", "personal number"
+        ]
+      },
+      "known_process": [
+        "apply on letsintern.com",
+        "shortlisting by employer",
+        "interview",
+        "offer letter on platform"
+      ],
+      "never_does": [
+        "charge application fee",
+        "contact via personal WhatsApp",
+        "ask for security deposit"
+      ],
+      "category": "internship_platform",
+      "keywords": ["letsintern", "intern", "internship"]
+    },
+    "unstop": {
+      "official_domains": ["unstop.com", "dare2compete.com"],
+      "official_emails": ["@unstop.com"],
+      "fee_policy": "never_charges_participation_fee_for_basic",
+      "max_legitimate_fee": 0,
+      "contact_policy": {
+        "uses": ["unstop.com", "@unstop.com"],
+        "never_uses": ["@gmail.com", "WhatsApp", "Telegram"]
+      },
+      "known_process": [
+        "register free on unstop.com",
+        "participate in competitions",
+        "prizes given by organizing company"
+      ],
+      "never_does": [
+        "charge registration for basic competitions",
+        "ask for fee to claim prize",
+        "contact via personal WhatsApp"
+      ],
+      "category": "internship_platform",
+      "keywords": ["unstop", "dare2compete", "hackathon", "competition"]
+    },
+    "hackerearth": {
+      "official_domains": ["hackerearth.com"],
+      "official_emails": ["@hackerearth.com"],
+      "fee_policy": "free_for_basic_competitions",
+      "max_legitimate_fee": 0,
+      "contact_policy": {
+        "uses": ["hackerearth.com", "@hackerearth.com"],
+        "never_uses": ["@gmail.com", "WhatsApp", "personal number"]
+      },
+      "never_does": [
+        "charge fee to participate in basic challenges",
+        "ask for bank details to give prize",
+        "contact via personal mobile"
+      ],
+      "category": "internship_platform",
+      "keywords": ["hackerearth", "coding", "challenge", "hackathon"]
+    }
+  },
+  "job_portals": {
+    "naukri": {
+      "official_domains": ["naukri.com"],
+      "official_emails": ["@naukri.com"],
+      "fee_policy": "never_charges_application_fee",
+      "max_legitimate_fee": 0,
+      "contact_policy": {
+        "uses": ["naukri.com", "@naukri.com"],
+        "never_uses": [
+          "@gmail.com", "WhatsApp job offer",
+          "personal mobile for job offer"
+        ]
+      },
+      "known_process": [
+        "job seeker applies on naukri.com",
+        "employer contacts via naukri platform",
+        "interview scheduled",
+        "offer letter from company email"
+      ],
+      "never_does": [
+        "charge fee to apply for jobs",
+        "guarantee job placement for fee",
+        "contact via personal WhatsApp for offers"
+      ],
+      "category": "job_portal",
+      "keywords": ["naukri", "job", "placement", "recruitment"]
+    },
+    "linkedin": {
+      "official_domains": ["linkedin.com"],
+      "official_emails": ["@linkedin.com"],
+      "fee_policy": "never_charges_application_fee",
+      "max_legitimate_fee": 0,
+      "contact_policy": {
+        "uses": ["linkedin.com", "@linkedin.com"],
+        "never_uses": [
+          "@gmail.com for job offers",
+          "WhatsApp for official job offers",
+          "personal number for recruitment"
+        ]
+      },
+      "never_does": [
+        "charge fee to apply",
+        "send job offers via WhatsApp",
+        "ask for security deposit for jobs"
+      ],
+      "category": "job_portal",
+      "keywords": ["linkedin", "job", "recruiter", "hiring"]
+    },
+    "foundit": {
+      "official_domains": ["foundit.in", "monsterindia.com"],
+      "official_emails": ["@foundit.in", "@monsterindia.com"],
+      "fee_policy": "never_charges_application_fee",
+      "max_legitimate_fee": 0,
+      "never_does": [
+        "charge fee for job applications",
+        "guarantee jobs for payment"
+      ],
+      "category": "job_portal",
+      "keywords": ["foundit", "monster", "job", "career"]
+    },
+    "apna": {
+      "official_domains": ["apna.co"],
+      "official_emails": ["@apna.co"],
+      "fee_policy": "never_charges_application_fee",
+      "max_legitimate_fee": 0,
+      "never_does": [
+        "charge fee to get employer contacts",
+        "ask for security deposit"
+      ],
+      "category": "job_portal",
+      "keywords": ["apna", "job", "blue collar", "work"]
+    }
+  },
+  "scholarship_portals": {
+    "nsp": {
+      "official_domains": ["scholarships.gov.in"],
+      "official_emails": ["@gov.in"],
+      "fee_policy": "never_requires_processing_fee",
+      "max_legitimate_fee": 0,
+      "max_monthly_amount": 3500,
+      "max_annual_amount": 50000,
+      "contact_policy": {
+        "uses": ["scholarships.gov.in", "@gov.in"],
+        "never_uses": [
+          "@gmail.com", "WhatsApp", "Telegram",
+          "personal mobile", "PhonePe", "Paytm personal"
+        ]
+      },
+      "known_process": [
+        "student applies at scholarships.gov.in",
+        "institute verifies application",
+        "district verifies",
+        "state verifies",
+        "amount directly credited to bank account"
+      ],
+      "never_does": [
+        "ask for processing fee",
+        "contact via WhatsApp",
+        "ask for fee to release scholarship",
+        "use gmail for communication",
+        "ask for OTP to release funds"
+      ],
+      "real_schemes": [
+        "Pre-Matric Scholarship",
+        "Post-Matric Scholarship",
+        "Merit cum Means Scholarship"
+      ],
+      "category": "scholarship_portal",
+      "keywords": ["nsp", "national scholarship", "scholarships.gov.in"]
+    },
+    "pm_scholarship": {
+      "official_domains": ["scholarships.gov.in", "ksb.gov.in"],
+      "official_emails": ["@gov.in", "@ksb.gov.in"],
+      "fee_policy": "fee_paid_by_government",
+      "max_legitimate_fee": 0,
+      "max_monthly_amount": 3000,
+      "max_annual_amount": 36000,
+      "contact_policy": {
+        "uses": ["scholarships.gov.in", "ksb.gov.in"],
+        "never_uses": [
+          "@gmail.com", "WhatsApp", "personal number"
+        ]
+      },
+      "never_does": [
+        "ask for any fee at any stage",
+        "promise amounts above Rs.3000 per month",
+        "contact via WhatsApp or Telegram",
+        "ask for OTP to release funds"
+      ],
+      "real_amount": "Rs.2000-Rs.3000 per month",
+      "category": "scholarship_portal",
+      "keywords": [
+        "pm scholarship", "prime minister scholarship",
+        "pmss", "central armed police"
+      ]
+    },
+    "ugc": {
+      "official_domains": ["ugc.ac.in", "ugcnetonline.in"],
+      "official_emails": ["@ugc.ac.in"],
+      "fee_policy": "never_requires_fee_for_approval",
+      "max_legitimate_fee": 0,
+      "contact_policy": {
+        "uses": ["ugc.ac.in", "@ugc.ac.in"],
+        "never_uses": [
+          "@gmail.com", "WhatsApp", "personal number"
+        ]
+      },
+      "never_does": [
+        "charge fee for scholarship approval",
+        "contact via WhatsApp",
+        "ask for processing charges"
+      ],
+      "category": "scholarship_portal",
+      "keywords": ["ugc", "university grants", "scholarship", "fellowship"]
+    },
+    "aicte": {
+      "official_domains": ["aicte-india.org", "internship.aicte-india.org"],
+      "official_emails": ["@aicte-india.org"],
+      "fee_policy": "never_requires_fee_for_recognition",
+      "max_legitimate_fee": 0,
+      "never_does": [
+        "charge fee for scholarship",
+        "charge for internship portal registration",
+        "contact via WhatsApp or Gmail"
+      ],
+      "category": "scholarship_portal",
+      "keywords": ["aicte", "all india council", "technical education"]
+    }
+  },
+  "banks": {
+    "sbi": {
+      "official_domains": ["sbi.co.in", "onlinesbi.sbi"],
+      "official_emails": ["@sbi.co.in"],
+      "official_helpline": "1800-11-2211",
+      "fee_policy": "never_asks_otp_via_call_or_message",
+      "contact_policy": {
+        "uses": ["sbi.co.in", "onlinesbi.sbi", "1800-11-2211"],
+        "never_uses": [
+          "@gmail.com", "WhatsApp", "Telegram",
+          "personal mobile number", "bit.ly links"
+        ]
+      },
+      "never_does": [
+        "ask for OTP via call or message",
+        "ask for card CVV via message",
+        "contact via WhatsApp for KYC",
+        "send links via SMS asking to login",
+        "ask for account password via any channel"
+      ],
+      "category": "bank",
+      "keywords": ["sbi", "state bank", "sbi bank"]
+    },
+    "hdfc": {
+      "official_domains": ["hdfcbank.com"],
+      "official_emails": ["@hdfcbank.com"],
+      "official_helpline": "1800-202-6161",
+      "fee_policy": "never_asks_otp_via_call_or_message",
+      "contact_policy": {
+        "uses": ["hdfcbank.com", "@hdfcbank.com", "1800-202-6161"],
+        "never_uses": [
+          "@gmail.com", "WhatsApp", "personal number",
+          "Telegram", "unofficial links"
+        ]
+      },
+      "never_does": [
+        "ask for OTP via message",
+        "ask for card details via WhatsApp",
+        "contact via Gmail for account issues",
+        "send login links via WhatsApp"
+      ],
+      "category": "bank",
+      "keywords": ["hdfc", "hdfc bank"]
+    },
+    "icici": {
+      "official_domains": ["icicibank.com"],
+      "official_emails": ["@icicibank.com"],
+      "official_helpline": "1800-1080",
+      "fee_policy": "never_asks_otp_via_call_or_message",
+      "contact_policy": {
+        "uses": ["icicibank.com", "@icicibank.com", "1800-1080"],
+        "never_uses": [
+          "@gmail.com", "WhatsApp", "personal number"
+        ]
+      },
+      "never_does": [
+        "ask for OTP via call or message",
+        "contact via WhatsApp for KYC",
+        "send phishing links via SMS"
+      ],
+      "category": "bank",
+      "keywords": ["icici", "icici bank"]
+    },
+    "axis": {
+      "official_domains": ["axisbank.com"],
+      "official_emails": ["@axisbank.com"],
+      "official_helpline": "1800-419-5959",
+      "fee_policy": "never_asks_otp_via_call_or_message",
+      "never_does": [
+        "ask for OTP via message",
+        "contact via WhatsApp for security",
+        "ask for PIN via call"
+      ],
+      "category": "bank",
+      "keywords": ["axis", "axis bank"]
+    },
+    "paytm": {
+      "official_domains": ["paytm.com"],
+      "official_emails": ["@paytm.com"],
+      "official_helpline": "0120-4456-456",
+      "fee_policy": "never_charges_kyc_fee",
+      "never_does": [
+        "ask for OTP via WhatsApp",
+        "charge fee for KYC",
+        "ask for wallet password via message",
+        "contact via personal number for KYC"
+      ],
+      "category": "payment_app",
+      "keywords": ["paytm", "paytm wallet", "paytm bank"]
+    },
+    "phonepe": {
+      "official_domains": ["phonepe.com"],
+      "official_emails": ["@phonepe.com"],
+      "official_helpline": "080-68727374",
+      "fee_policy": "never_charges_for_transactions",
+      "never_does": [
+        "ask for OTP via call",
+        "charge fee for money transfer",
+        "contact via personal WhatsApp for issues"
+      ],
+      "category": "payment_app",
+      "keywords": ["phonepe", "phone pe", "upi"]
+    },
+    "gpay": {
+      "official_domains": ["pay.google.com"],
+      "official_emails": ["@google.com"],
+      "fee_policy": "never_charges_for_transactions",
+      "never_does": [
+        "ask for OTP via message",
+        "charge fee for transfers",
+        "contact via WhatsApp"
+      ],
+      "category": "payment_app",
+      "keywords": ["gpay", "google pay", "tez"]
+    }
+  },
+  "companies": {
+    "tcs": {
+      "official_domains": ["tcs.com", "nextstep.tcs.com"],
+      "official_emails": ["@tcs.com"],
+      "fee_policy": "never_charges_joining_or_training_fee",
+      "max_legitimate_fee": 0,
+      "contact_policy": {
+        "uses": ["tcs.com", "@tcs.com", "nextstep.tcs.com"],
+        "never_uses": [
+          "@gmail.com", "WhatsApp for offers",
+          "personal mobile for recruitment"
+        ]
+      },
+      "known_process": [
+        "apply at nextstep.tcs.com",
+        "aptitude test online",
+        "technical interview",
+        "HR interview",
+        "offer letter from @tcs.com email"
+      ],
+      "never_does": [
+        "charge joining fee",
+        "charge training fee",
+        "charge medical test fee",
+        "send offer via WhatsApp",
+        "use gmail for official offers"
+      ],
+      "category": "company",
+      "keywords": ["tcs", "tata consultancy", "tata group"]
+    },
+    "infosys": {
+      "official_domains": ["infosys.com", "infytq.com"],
+      "official_emails": ["@infosys.com"],
+      "fee_policy": "never_charges_joining_or_training_fee",
+      "max_legitimate_fee": 0,
+      "contact_policy": {
+        "uses": ["infosys.com", "@infosys.com"],
+        "never_uses": [
+          "@gmail.com", "WhatsApp", "personal number"
+        ]
+      },
+      "known_process": [
+        "apply at infosys.com/careers",
+        "InfyTQ platform assessment",
+        "technical interview",
+        "HR round",
+        "offer from @infosys.com"
+      ],
+      "never_does": [
+        "charge any fee at any stage",
+        "contact via WhatsApp for job offers",
+        "use gmail for official communication"
+      ],
+      "category": "company",
+      "keywords": ["infosys", "infy", "infytq"]
+    },
+    "wipro": {
+      "official_domains": ["wipro.com"],
+      "official_emails": ["@wipro.com"],
+      "fee_policy": "never_charges_joining_or_training_fee",
+      "max_legitimate_fee": 0,
+      "contact_policy": {
+        "uses": ["wipro.com", "@wipro.com"],
+        "never_uses": [
+          "@gmail.com", "WhatsApp job offers",
+          "personal mobile"
+        ]
+      },
+      "never_does": [
+        "charge fee for joining",
+        "charge for WILP program application",
+        "contact via personal WhatsApp"
+      ],
+      "category": "company",
+      "keywords": ["wipro", "wipro technologies", "wilp"]
+    },
+    "cognizant": {
+      "official_domains": ["cognizant.com"],
+      "official_emails": ["@cognizant.com"],
+      "fee_policy": "never_charges_joining_or_training_fee",
+      "max_legitimate_fee": 0,
+      "never_does": [
+        "charge documentation fee",
+        "charge background verification fee",
+        "contact via WhatsApp for official offers"
+      ],
+      "category": "company",
+      "keywords": ["cognizant", "ctg", "cognizant technology"]
+    },
+    "accenture": {
+      "official_domains": ["accenture.com"],
+      "official_emails": ["@accenture.com"],
+      "fee_policy": "never_charges_joining_or_training_fee",
+      "max_legitimate_fee": 0,
+      "never_does": [
+        "charge any fee for recruitment",
+        "contact via personal WhatsApp"
+      ],
+      "category": "company",
+      "keywords": ["accenture"]
+    },
+    "hcl": {
+      "official_domains": ["hcltech.com", "hcl.com"],
+      "official_emails": ["@hcl.com", "@hcltech.com"],
+      "fee_policy": "never_charges_joining_or_training_fee",
+      "max_legitimate_fee": 0,
+      "never_does": [
+        "charge fee for joining",
+        "use gmail for recruitment"
+      ],
+      "category": "company",
+      "keywords": ["hcl", "hcl technologies", "hcltech"]
+    },
+    "amazon": {
+      "official_domains": ["amazon.in", "amazon.com"],
+      "official_emails": ["@amazon.com", "@amazon.in"],
+      "fee_policy": "never_charges_joining_fee",
+      "max_legitimate_fee": 0,
+      "never_does": [
+        "charge fee for work from home kit",
+        "run lucky draw prizes via WhatsApp",
+        "ask for OTP via phone call",
+        "offer guaranteed work from home packing jobs"
+      ],
+      "category": "company",
+      "keywords": ["amazon", "amazon india", "amazon pay"]
+    },
+    "google": {
+      "official_domains": ["google.com", "careers.google.com"],
+      "official_emails": ["@google.com"],
+      "fee_policy": "never_charges_application_fee",
+      "max_legitimate_fee": 0,
+      "never_does": [
+        "charge fee for internship",
+        "send job offers via WhatsApp",
+        "use gmail accounts for official recruitment"
+      ],
+      "category": "company",
+      "keywords": ["google", "google india", "google careers"]
+    },
+    "microsoft": {
+      "official_domains": ["microsoft.com", "careers.microsoft.com"],
+      "official_emails": ["@microsoft.com"],
+      "fee_policy": "never_charges_application_fee",
+      "max_legitimate_fee": 0,
+      "never_does": [
+        "charge fee for internship",
+        "contact via personal WhatsApp",
+        "use gmail for recruitment"
+      ],
+      "category": "company",
+      "keywords": ["microsoft", "microsoft india", "msft"]
+    }
+  },
+  "government": {
+    "irctc": {
+      "official_domains": ["irctc.co.in", "irctc.com"],
+      "official_emails": ["@irctc.co.in"],
+      "fee_policy": "known_fee_structure_on_website",
+      "never_does": [
+        "give free ticket prizes via WhatsApp",
+        "ask for OTP via call",
+        "contact via personal number for bookings"
+      ],
+      "category": "government",
+      "keywords": ["irctc", "railway", "train ticket", "indian railway"]
+    },
+    "uidai": {
+      "official_domains": ["uidai.gov.in", "myaadhaar.uidai.gov.in"],
+      "official_emails": ["@uidai.gov.in"],
+      "fee_policy": "aadhaar_update_has_nominal_fee_at_center",
+      "max_legitimate_fee": 50,
+      "never_does": [
+        "ask for OTP via WhatsApp",
+        "charge high fee for Aadhaar update",
+        "contact via personal number",
+        "ask for bank details for Aadhaar linking"
+      ],
+      "category": "government",
+      "keywords": ["aadhaar", "uidai", "aadhar", "biometric"]
+    },
+    "nta": {
+      "official_domains": [
+        "nta.ac.in", "jeemain.nta.nic.in",
+        "neet.nta.nic.in", "ugcnet.nta.nic.in"
+      ],
+      "official_emails": ["@nta.ac.in"],
+      "fee_policy": "known_exam_fee_on_official_portal_only",
+      "never_does": [
+        "contact via WhatsApp for exam results",
+        "charge fee outside official portal",
+        "share results via personal email"
+      ],
+      "category": "government",
+      "keywords": ["nta", "jee", "neet", "ugc net", "cuet"]
+    },
+    "rbi": {
+      "official_domains": ["rbi.org.in"],
+      "official_emails": ["@rbi.org.in"],
+      "fee_policy": "never_contacts_individuals_for_money",
+      "never_does": [
+        "contact individuals about unclaimed funds",
+        "ask for fee to release money",
+        "contact via WhatsApp or Telegram",
+        "use gmail for official communication"
+      ],
+      "category": "government",
+      "keywords": ["rbi", "reserve bank", "rbi india"]
+    },
+    "epfo": {
+      "official_domains": ["epfindia.gov.in", "unifiedportal-mem.epfindia.gov.in"],
+      "official_emails": ["@epfindia.gov.in"],
+      "fee_policy": "pf_withdrawal_is_completely_free",
+      "max_legitimate_fee": 0,
+      "never_does": [
+        "charge fee for PF withdrawal",
+        "ask for OTP via WhatsApp for PF",
+        "contact via personal number for PF claims"
+      ],
+      "category": "government",
+      "keywords": ["epfo", "pf", "provident fund", "uan", "epf"]
+    }
+  },
+  "education": {
+    "nptel": {
+      "official_domains": ["nptel.ac.in", "swayam.gov.in"],
+      "official_emails": ["@nptel.ac.in"],
+      "fee_policy": "courses_free_certificate_has_exam_fee",
+      "max_legitimate_fee": 1500,
+      "never_does": [
+        "charge for course content",
+        "contact via WhatsApp",
+        "ask for high fee for certificate"
+      ],
+      "category": "education",
+      "keywords": ["nptel", "swayam", "iit courses", "online course"]
+    },
+    "coursera": {
+      "official_domains": ["coursera.org"],
+      "official_emails": ["@coursera.org"],
+      "fee_policy": "audit_free_certificate_paid",
+      "never_does": [
+        "offer completely free certificates without financial aid",
+        "contact via WhatsApp",
+        "charge in cash or Paytm"
+      ],
+      "category": "education",
+      "keywords": ["coursera", "online learning", "certificate course"]
+    }
+  },
+  "scam_fee_keywords": [
+    "registration fee", "joining fee", "security deposit",
+    "processing fee", "verification fee", "activation fee",
+    "documentation fee", "training fee", "kit charges",
+    "delivery charge", "stamp duty", "gst charge",
+    "refundable deposit", "one time payment", "advance payment",
+    "registration amount", "panjikaran shulk", "fee bhejo",
+    "paisa bhejo", "payment karo", "transfer karo",
+    "deposit karo", "pay now", "pay immediately",
+    "urgent payment", "limited time", "24 hours",
+    "offer expires", "last chance", "act now"
+  ],
+  "scam_urgency_keywords": [
+    "urgent", "immediately", "within 24 hours", "today only",
+    "limited seats", "offer expires", "last chance",
+    "act now", "do not delay", "abhi karo", "jaldi karo",
+    "aaj hi", "kal tak", "sirf aaj", "turant",
+    "expires tonight", "only today", "hurry"
+  ],
+  "scam_contact_keywords": [
+    "@gmail.com", "@yahoo.com", "@hotmail.com",
+    "bit.ly", "tinyurl", "shorturl", "t.me/",
+    "WhatsApp only", "Telegram only",
+    "personal Paytm", "personal PhonePe",
+    "personal GPay", "personal mobile"
+  ],
+  "legitimate_process_keywords": [
+    "official website", "company portal", "careers page",
+    "no fee", "free to apply", "stipend provided",
+    "expenses covered", "merit based", "direct to account",
+    "offer letter attached", "reporting date",
+    "bring documents", "scheduled interview",
+    "microsoft teams", "google meet", "zoom interview"
+  ]
+}
