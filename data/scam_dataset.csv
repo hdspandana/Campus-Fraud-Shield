@@ -1,206 +1,29 @@
-text,label,category,source
-"Congratulations! You have been selected for internship at our MNC partner company. Pay Rs.1500 registration fee on Paytm 9876543210 to confirm your slot. Offer expires in 24 hours.",1,internship_fee,whatsapp
-"Dear student your application for software internship has been approved. Pay Rs.2000 security deposit to HRdept@gmail.com to get your offer letter. Limited seats available.",1,internship_fee,email
-"You are selected for work from home internship paying Rs.15000 per month. Pay Rs.999 registration charge to activate your profile. Contact hr.internship2024@gmail.com",1,internship_fee,whatsapp
-"Internshala partner company has selected you for digital marketing internship. Pay Rs.1200 joining fee to 8765432109 on PhonePe. Training starts Monday.",1,internship_fee,whatsapp
-"Congratulations from Wipro HR team. You are selected for internship. Pay Rs.500 background verification fee to proceed. Send to wipro.hr2024@gmail.com",1,internship_fee,email
-"Work from home data entry job. Earn Rs.500 per hour. Pay Rs.1500 registration fee to get started. WhatsApp 9123456789 for details. Limited seats.",1,internship_fee,whatsapp
-"Amazon work from home opportunity. Selected candidates pay Rs.2500 training fee. Get Rs.50000 monthly. Contact amazonjobs2024@gmail.com",1,internship_fee,email
-"You have been shortlisted for TCS internship through campus drive. Deposit Rs.800 processing fee to confirm. Pay on Paytm 9988776655. Joining in 2 days.",1,internship_fee,whatsapp
-"Infosys internship offer for final year students. Pay Rs.1000 document verification fee to hr.infosys@gmail.com. Start earning Rs.20000 monthly.",1,internship_fee,email
-"Accenture has selected you for 6 month internship. Pay Rs.1500 registration to secure your seat. Send on GPay 8877665544. Offer valid 24 hours only.",1,internship_fee,whatsapp
-"Dear applicant you won Rs.50000 in KBC lucky draw. Send OTP received on your number to claim prize. Contact kbc.prize2024@gmail.com urgently.",1,lottery_prize,whatsapp
-"Your mobile number selected in Jio lucky draw. Prize Rs.25000. Send your bank details and OTP to claim. WhatsApp 9876501234. Offer expires tonight.",1,lottery_prize,whatsapp
-"Congratulations you have won iPhone 15 in online lucky draw. Pay Rs.299 delivery charge to receive your prize. Send to Paytm 9765432108.",1,lottery_prize,whatsapp
-"BSNL lucky draw winner. You won Rs.1 lakh. Share your Aadhaar and bank account to receive amount. Contact bsnl.prize@gmail.com today.",1,lottery_prize,email
-"Amazon Great Sale lucky winner. Rs.75000 credited to your account. Verify by sending OTP to our agent 8899776655. Claim within 2 hours.",1,lottery_prize,whatsapp
-"NSP scholarship of Rs.25000 approved for you. Pay Rs.500 processing fee to release funds. Send to PhonePe 8765432109. Amount credited in 2 hours.",1,scholarship_fee,whatsapp
-"PM scholarship amount of Rs.50000 ready for disbursement. Pay Rs.1000 GST charge to receive in your account. Contact pmscholarship2024@gmail.com",1,scholarship_fee,email
-"Your state scholarship application approved. Pay Rs.300 verification fee to activate. Send on Paytm 9876543210. Scholarship of Rs.12000 will be credited.",1,scholarship_fee,whatsapp
-"UGC scholarship for meritorious students. Rs.30000 approved. Pay Rs.750 processing charge to nsp.scholarship@gmail.com to receive funds.",1,scholarship_fee,email
-"AICTE scholarship selected students must pay Rs.500 portal fee to confirm eligibility. Pay to 8765401234 on GPay. Scholarship Rs.25000 per year.",1,scholarship_fee,whatsapp
-"SBI bank account will be blocked. Verify your KYC immediately by sharing OTP sent to your number. Call 9988001122 urgently.",1,otp_fraud,whatsapp
-"Your HDFC account shows suspicious activity. Share OTP to verify your identity and prevent blocking. Contact hdfc.security@gmail.com now.",1,otp_fraud,email
-"ICICI bank urgent alert. Your debit card will expire. Send OTP received on mobile to reactivate. WhatsApp 9876509876 immediately.",1,otp_fraud,whatsapp
-"Paytm KYC verification required. Account will be suspended in 24 hours. Share OTP to our agent to complete KYC. Contact 8877001122.",1,otp_fraud,whatsapp
-"Your UPI account flagged for security. Send OTP to verify. Failure to verify will block all transactions. Contact upialert@gmail.com",1,otp_fraud,email
-"Part time job opportunity for students. Earn Rs.800 per hour from home. Pay Rs.500 registration to get tasks. WhatsApp 9123456780.",1,parttime_job,whatsapp
-"Online data entry work for students. Rs.1000 daily income guaranteed. Pay Rs.1500 security deposit to start. Contact datatask2024@gmail.com",1,parttime_job,email
-"YouTube like and subscribe tasks. Earn Rs.500 per hour. Pay Rs.999 to join our telegram group and get tasks. WhatsApp 8765490123.",1,parttime_job,whatsapp
-"Amazon product review job. Earn Rs.2000 daily. Pay Rs.1200 activation fee to receive tasks on WhatsApp. Limited slots available today.",1,parttime_job,whatsapp
-"Work from home typing job. Rs.20000 monthly guaranteed. Pay Rs.800 registration on Paytm 9988776600. Training provided free after payment.",1,parttime_job,whatsapp
-"Fake internshala.co website offering internship. Pay Rs.1500 to confirm. Original site is internshala.com. Do not trust this.",1,internship_fee,web
-"nsp-scholarship.in website asking for processing fee. Real NSP portal is scholarships.gov.in and never charges fee.",1,scholarship_fee,web
-"sbi-kyc-update.com asking for OTP and account details. Real SBI never asks OTP via website link.",1,otp_fraud,web
-"hdfc-bank-reward.co.in asking for card details to claim reward points. Fake HDFC website.",1,otp_fraud,web
-"amazon-lucky-winner.in asking Rs.299 delivery fee for prize. Amazon never runs such lotteries.",1,lottery_prize,web
-"Urgent fee demand from unknown WhatsApp number claiming to be from your college. Pay Rs.2000 library fine immediately or face exam ban.",1,unknown_scam,whatsapp
-"You have been selected for government job. Pay Rs.5000 application fee to secure position. Contact govtjob2024@gmail.com",1,job_fee,email
-"Railway recruitment selected candidates. Pay Rs.2000 training fee to join. Send on Paytm 9876543211. Joining letter after payment.",1,job_fee,whatsapp
-"SSC CGL selected. Pay Rs.3000 verification charge to proceed to next round. Contact ssc.recruitment@gmail.com urgently.",1,job_fee,email
-"Bank PO selected candidates pay Rs.1500 documentation fee. Send to GPay 8765409876. Appointment letter will be emailed.",1,job_fee,whatsapp
-"Aapka internship select ho gaya hai. Rs.1000 registration fee Paytm karo 9876543210 pe. 24 ghante mein pay karo.",1,internship_fee,whatsapp
-"Bhai free mein job milegi WFH. Pehle Rs.500 dena hoga registration ke liye. WhatsApp karo 9123456789.",1,parttime_job,whatsapp
-"NSP scholarship approve ho gaya Rs.20000 ka. Processing fee Rs.400 bhejo PhonePe pe 8765432109. Abhi transfer hoga.",1,scholarship_fee,whatsapp
-"Aapka KBC mein naam aaya hai lucky draw mein. Prize lene ke liye OTP share karo hamare agent ke saath.",1,lottery_prize,whatsapp
-"SBI account band hone wala hai. Abhi OTP share karo 9988001122 pe. Kal tak nahi kiya toh account block ho jayega.",1,otp_fraud,whatsapp
-"Congratulations you are selected for Cognizant internship program 2024. Report to HR office on Monday with documents. No fee required.",0,safe,email
-"Your application for Google Summer of Code 2024 has been received. Results will be announced on official website gsoc.google.com",0,safe,email
-"TCS NextStep interview scheduled for Thursday 10AM. Venue: TCS office Bangalore. Carry college ID and resume. No charges applicable.",0,safe,email
-"Infosys Instep internship offer letter attached. Start date June 1. Report to Mysore campus. All expenses covered by Infosys.",0,safe,email
-"Your Internshala internship application to ABC Tech has been forwarded to employer. You will hear back within 5 working days.",0,safe,email
-"NSP scholarship amount of Rs.12000 disbursed to your bank account. Check your passbook or net banking. No action required.",0,safe,sms
-"Your PM scholarship application is under review at scholarships.gov.in. Login to check status. No fee is charged at any stage.",0,safe,email
-"AICTE has approved your college internship program. Students can apply directly at internship.aicte-india.org. Free registration.",0,safe,web
-"UGC NET exam admit card available at ugcnet.nta.nic.in. Download using your registration number. Exam date June 16.",0,safe,web
-"Your JEE Advanced registration is confirmed. Admit card will be available at jeeadv.ac.in two weeks before exam.",0,safe,sms
-"SBI account statement for April 2024. Opening balance Rs.15234. Closing balance Rs.18456. No suspicious transactions detected.",0,safe,sms
-"HDFC Bank: Your EMI of Rs.3500 debited on 1st May. Auto-pay successful. No action required.",0,safe,sms
-"PhonePe: Rs.500 received from Rahul Sharma. Available balance Rs.2340. Transaction ID: P2024050112345",0,safe,sms
-"Your Amazon order #402-1234567 has been shipped. Expected delivery May 8. Track at amazon.in/orders",0,safe,sms
-"Swiggy: Your order from Dominos is on the way. Delivery in 25 minutes. Track live in the app.",0,safe,sms
-"Dear student your semester exam timetable is available on college portal. Login with your student ID to download.",0,safe,email
-"Campus placement drive: Wipro visiting on May 15. Register at placement.college.ac.in by May 10. Eligibility: 60% aggregate.",0,safe,email
-"Your hostel fee of Rs.25000 for semester 2 is due by June 30. Pay at college accounts office or via college portal.",0,safe,email
-"Library book return reminder. Books due on May 20. Fine of Rs.2 per day after due date. Return to library counter.",0,safe,sms
-"Your college ID card is ready for collection. Visit admin office between 10AM and 4PM with your admission receipt.",0,safe,email
-"Internship at Microsoft confirmed. Stipend Rs.80000 per month. Report to Hyderabad office June 1. Relocation allowance provided.",0,safe,email
-"Your GitHub student developer pack has been approved. Access free tools at education.github.com. Valid for 2 years.",0,safe,email
-"Coursera financial aid approved for Machine Learning course. Enroll free at coursera.org. Certificate on completion.",0,safe,email
-"HackerEarth coding challenge results: You scored 87/100. Certificate available for download at hackerearth.com/profile",0,safe,email
-"Unstop hackathon registration confirmed. Event on May 25 at IIT Delhi. Team of 4. Prize pool Rs.1 lakh.",0,safe,email
-"Your PAN card application submitted successfully. Track status at tin.tin.nsdl.com. Expected delivery 15 working days.",0,safe,sms
-"Aadhaar update request received. Visit nearest enrollment center with original documents. No fee charged by UIDAI.",0,safe,sms
-"IRCTC booking confirmed. Train 12345 on May 10. PNR: 1234567890. Departure 6AM from New Delhi. Seat: S4 45.",0,safe,sms
-"Your Flipkart order delivered. Rate your experience. Return within 7 days if not satisfied. Customer care: 1800-202-9898",0,safe,sms
-"Google Pay: Rs.2000 sent to Mom successfully. UPI Ref: 123456789012. Balance sufficient. Transaction complete.",0,safe,sms
-"You have won a special internship via lottery. No interview needed. Just pay Rs.2000 to confirm your selected position.",1,internship_fee,whatsapp
-"Selected for high paying remote job Rs.80000 monthly. Only requirement is pay Rs.3000 security deposit first.",1,job_fee,whatsapp
-"Your bank account has been compromised. Immediately share your card number CVV and OTP to secure it.",1,otp_fraud,whatsapp
-"Free laptop scheme for students. Register now and pay Rs.500 shipping charge. Government approved scheme.",1,unknown_scam,whatsapp
-"Earn Rs.10000 daily by investing Rs.5000 in our crypto scheme. Guaranteed returns. Contact invest2024@gmail.com",1,unknown_scam,email
-"Your resume selected for dream job. Pay Rs.1000 to get interview call letter from top MNC. Contact hr@jobseeker.in",1,job_fee,email
-"Scholarship worth Rs.1 lakh for meritorious students. Pay Rs.1500 application fee to apply. Deadline tomorrow.",1,scholarship_fee,whatsapp
-"Work from home opportunity. Like Facebook posts earn Rs.500 each. Pay Rs.800 to join our program. WhatsApp 9876543210.",1,parttime_job,whatsapp
-"Your Aadhaar linked bank account selected for government relief fund of Rs.15000. Pay Rs.200 stamp duty to receive.",1,unknown_scam,whatsapp
-"College festival sponsorship fraud. Pay Rs.5000 advance for stall booking at fest. Contact fest2024@gmail.com",1,unknown_scam,email
-"Paytm cashback offer. Send Rs.1 to 9876543210 and receive Rs.1000 cashback instantly. Limited time offer today.",1,unknown_scam,whatsapp
-"Urgent your electricity connection will be cut tonight. Pay Rs.1500 immediately to 9988776655 on Paytm.",1,unknown_scam,whatsapp
-"Your cousin met with accident. Send Rs.10000 urgently to 9876543210 for hospital. Will explain later. Please help.",1,unknown_scam,whatsapp
-"Double your money scheme. Send Rs.500 get Rs.1000 back in 24 hours. 100% guaranteed. Paytm 9123456789.",1,unknown_scam,whatsapp
-"Free recharge offer. Forward this message to 10 friends and get Rs.100 Jio recharge free. Limited time.",1,unknown_scam,whatsapp
-"Internship selected students from Internshala please note interview is scheduled for tomorrow at 2PM via Google Meet.",0,safe,email
-"Your Naukri profile viewed by 15 recruiters this week. Update your resume to increase visibility. Login at naukri.com",0,safe,email
-"LinkedIn: Rahul from Google viewed your profile. You have 3 new connection requests. Login to respond.",0,safe,email
-"Your college fee receipt for semester 3 attached. Amount paid Rs.45000. Transaction ID: HDFC20240501. Keep for records.",0,safe,email
-"Exam results declared. Check your marks at university portal. Grade card available for download. Revaluation window open.",0,safe,sms
-"Selected for campus interview at Deloitte on May 20. Venue: Seminar Hall Block B. Time 9AM. Carry printed resume.",0,safe,email
-"Your internship completion certificate from Internshala is ready. Download from your dashboard at internshala.com",0,safe,email
-"NPTEL course certificate issued. Download at nptel.ac.in using your enrollment ID. Valid credential for placement.",0,safe,email
-"Your college library account has 3 books issued. Return by May 25 to avoid fine. Current balance Rs.0.",0,safe,sms
-"Hostel room allotment for academic year 2024-25. Room 204 Block C allotted. Report with documents on June 5.",0,safe,email
-"Fake Cognizant email asking for Rs.2000 documentation fee before joining. Real Cognizant never charges joining fee.",1,job_fee,email
-"Fake TCS offer letter asking to pay Rs.3000 medical test fee. Real TCS conducts medical test free of charge.",1,job_fee,email
-"Message claiming to be from IIT professor offering paid research position. Pay Rs.5000 to secure spot. Fake.",1,job_fee,whatsapp
-"Fake UPSC result notification. You cleared prelims. Pay Rs.2000 to get detailed result and next steps.",1,job_fee,email
-"Fraud college admission message. Pay Rs.10000 to secure seat in top engineering college through management quota.",1,unknown_scam,whatsapp
-"Aapko internship mil gayi hai TCS mein. Joining ke liye Rs.1500 pay karo. Paytm karo 9876543210 pe aaj hi.",1,internship_fee,whatsapp
-"Bhai NSP scholarship ka paisa aane wala hai. Pehle Rs.300 processing fee bhejo PhonePe pe 8765432100.",1,scholarship_fee,whatsapp
-"Lottery mein aapka number nikla hai. Rs.75000 jeete hain aap. OTP share karo prize lene ke liye. Jaldi karo.",1,lottery_prize,whatsapp
-"Bank se message aa raha hai account band hone wala hai. OTP share karo agent ke saath abhi turant.",1,otp_fraud,whatsapp
-"WFH kaam milega Rs.20000 monthly. Pehle Rs.1000 deposit karo account activate karne ke liye. WhatsApp karo.",1,parttime_job,whatsapp
-"Your application to Flipkart internship program has been shortlisted. HR will contact you within 3 working days.",0,safe,email
-"Congratulations on clearing Wipro NLTH test. Next round is technical interview. Details sent to registered email.",0,safe,email
-"Your digital India internship application submitted. Merit list at digitalindia.gov.in on June 1. No fee charged.",0,safe,email
-"ISRO Young Scientist program application received. Selection based on academic merit. Results at isro.gov.in.",0,safe,email
-"Your scholarship application at scholarships.gov.in is under verification. Disbursement in 30 working days.",0,safe,sms
-"Fee receipt: Tuition fee Rs.35000 received for Semester 4. Reference: TXN2024050112. Contact accounts for queries.",0,safe,sms
-"Your Aadhaar biometric update completed successfully at enrollment center. No further action required.",0,safe,sms
-"Income tax refund of Rs.4500 processed. Amount credited to bank account linked with PAN. Check statement.",0,safe,sms
-"Your driving licence renewal application submitted at RTO. Collection after 15 working days. No additional fee.",0,safe,sms
-"Bus pass renewal reminder. Current pass expires May 31. Renew at college admin office with ID and photo.",0,safe,sms
-"You are selected for part time work. Earn Rs.50000 monthly. No fee required. Interview on Zoom. Legitimate company.",0,safe,email
-"Research internship at IISc Bangalore. Stipend Rs.15000. Apply at iisc.ac.in/internship. No application fee.",0,safe,email
-"Microsoft Learn student ambassador program open. Apply free at studentambassadors.microsoft.com. No charges.",0,safe,email
-"Google developer student club recruitment open at your college. Free to join. Apply at gdsc.community.google.com",0,safe,email
-"Amazon ML summer school application open. Free program. Apply at amazon.science/mlss. Stipend for selected.",0,safe,email
-"Urgent lottery prize claim. You won Rs.500000. Pay Rs.5000 as lottery tax to claim. Contact lotterywin@gmail.com",1,lottery_prize,email
-"Your Paytm wallet will be deactivated. Complete KYC by sharing Aadhaar number and OTP to 9988001133 today.",1,otp_fraud,whatsapp
-"Fake Amazon job offer. Work from home packing job. Pay Rs.2000 kit charges. Earn Rs.1500 per day guaranteed.",1,parttime_job,email
-"Government free laptop yojana. Students register and pay Rs.500 courier charge. Laptop delivered in 7 days.",1,unknown_scam,whatsapp
-"Fake PhD scholarship. International university offering scholarship. Pay Rs.10000 application fee to apply.",1,scholarship_fee,email
-"Apna app job selected. Pay Rs.500 to get employer contact details and start working from tomorrow.",1,job_fee,whatsapp
-"Freelancing opportunity. Earn Rs.5000 daily from home. Pay Rs.1500 course fee to learn skills and get projects.",1,parttime_job,email
-"Your name in PM housing scheme. Pay Rs.2000 registration to get free house under PMAY scheme. Contact 9876501122.",1,unknown_scam,whatsapp
-"Instagram influencer program. Get paid Rs.1000 per post. Pay Rs.800 to register as brand ambassador.",1,parttime_job,whatsapp
-"Fake Naukri premium membership. Pay Rs.999 to unlock job applications and get guaranteed placement in 30 days.",1,job_fee,email
-"Campus recruitment: HCL Technologies visiting on June 5. Eligible: B.Tech all branches 65% and above. Free registration at hcl.com/careers",0,safe,email
-"Your LPG subsidy of Rs.1200 credited to bank account linked with Aadhaar. Check bank statement for credit.",0,safe,sms
-"Income tax portal: Your ITR filed successfully for AY 2024-25. Acknowledgement number 123456789012. Keep safe.",0,safe,sms
-"PMKVY skill development course registration open. Free training and certification. Apply at pmkvyofficial.org",0,safe,web
-"Your college anti-ragging complaint submitted. Reference number: AR20240501. Will be addressed within 7 days.",0,safe,email
-"Swayam NPTEL online course enrollment open. Free courses with paid certificate option. Enroll at swayam.gov.in",0,safe,web
-"Your voter ID card application submitted at Voter registration center. Track at nvsp.in using reference number.",0,safe,sms
-"Class 12 board result available at cbseresults.nic.in. Enter roll number and school code to view marks.",0,safe,sms
-"Your college sports fee of Rs.500 for annual sports meet is due. Pay at sports office by May 25.",0,safe,sms
-"Seminar registration confirmed. Data Science workshop on May 18 at college auditorium. Certificate provided. Free.",0,safe,email
-"Selected for Microsoft internship through referral. Congratulations. Offer letter sent to email. Joining July 1.",0,safe,email
-"Your Jio number ported successfully to Vi. Services active from today. Recharge at vijio.com for best plans.",0,safe,sms
-"Electricity bill of Rs.1234 for April generated. Due date May 20. Pay online at bescom.org or at counter.",0,safe,sms
-"Your college alumni network invitation. Join at alumni.college.ac.in using student ID. Free lifetime membership.",0,safe,email
-"Registered for National level hackathon by Smart India Hackathon. Your team ID: SIH2024-1234. Next steps at sih.gov.in",0,safe,email
-"Congratulations you are pre-selected for high paying job at Dubai. Just pay Rs.15000 visa processing fee.",1,job_fee,whatsapp
-"Online investment scheme double money in 7 days. Invest Rs.2000 get Rs.4000. Trusted by 10000 students.",1,unknown_scam,whatsapp
-"Your friend shared your number for part time job. Earn Rs.3000 daily. Pay Rs.500 to get started today.",1,parttime_job,whatsapp
-"Fake college admission counselor. Guaranteed seat in NIT. Pay Rs.25000 advance as seat booking amount.",1,unknown_scam,whatsapp
-"Matrimonial scam targeting students. Girl/boy interested in you. Share your bank details for gift transfer.",1,unknown_scam,whatsapp
-"Fake internship offer from fake company with real logo of Google. Pay Rs.2000 joining kit to start.",1,internship_fee,email
-"You won brand new bike in college raffle. Pay Rs.3000 RTO registration charges to get delivery.",1,lottery_prize,whatsapp
-"Earn from home by completing surveys. Pay Rs.999 to join premium survey platform and earn Rs.500 per survey.",1,parttime_job,whatsapp
-"Fake RBI notification. Unclaimed funds in your name. Pay Rs.1500 claim fee to receive Rs.50000 in 24 hours.",1,unknown_scam,email
-"Telegram crypto trading group. Guaranteed 300% returns. Pay Rs.5000 to join VIP group and get tips.",1,unknown_scam,whatsapp
-"Your application for Zomato delivery partner accepted. Pay Rs.500 for uniform and delivery bag to start.",1,job_fee,whatsapp
-"Meesho reselling program. Earn Rs.2000 daily. Pay Rs.1000 to join as seller and get product catalog.",1,parttime_job,whatsapp
-"Fake education loan. Get Rs.5 lakh education loan. Pay Rs.2000 processing fee to education.loan@gmail.com",1,unknown_scam,email
-"Insurance maturity amount of Rs.2 lakh ready. Pay Rs.1000 release fee to insurance.claim2024@gmail.com",1,unknown_scam,email
-"Your PF amount of Rs.45000 ready for withdrawal. Pay Rs.800 tax clearance fee to receive amount today.",1,unknown_scam,whatsapp
-"TCS job offer confirmed for freshers. Joining July 2024. Report to Chennai office. Salary Rs.3.5 LPA. Offer letter attached.",0,safe,email
-"Infosys placement drive results. Selected candidates will receive offer letter via registered email in 5 days.",0,safe,email
-"Wipro WILP program admission confirmed. Classes start June 10 at Pune campus. Fee structure at wipro.com/wilp",0,safe,email
-"Your LinkedIn profile is in top 5% for your skills this week. Apply to 3 recommended jobs that match your profile.",0,safe,email
-"Naukri job alert: 15 new jobs matching Software Developer profile in Bangalore. Apply at naukri.com/jobs",0,safe,email
-"Your GitHub pull request approved and merged. Contribution added to open source project stats. Keep contributing.",0,safe,email
-"Leetcode streak: 30 days coding streak achieved. Badge added to profile. Keep solving daily problems.",0,safe,email
-"Coursera specialization certificate earned: Python for Everybody. Share on LinkedIn at coursera.org/certificates",0,safe,email
-"Your college exam hall ticket available. Download from student portal using ID and date of birth. Print 2 copies.",0,safe,sms
-"Scholarship renewal reminder. Submit income certificate and marksheet at scholarships.gov.in by June 30.",0,safe,email
-"Selected for DRDO internship project. Stipend Rs.10000 per month. Security clearance required. No fee charged.",0,safe,email
-"IIT internship portal open for applications. Apply at intern.iitb.ac.in. Stipend varies by project. Free to apply.",0,safe,web
-"Your college bus route changed from June 1. New route map available at transport.college.ac.in. Free service.",0,safe,sms
-"Annual exam fee Rs.2500 deducted from scholarship account. Balance Rs.9500. Exam form submitted successfully.",0,safe,sms
-"Blood donation camp at college on May 20. Register at health.college.ac.in. Free health checkup for donors.",0,safe,email
-"Job mila hai bhai Amazon mein. Real offer letter aa gaya email pe. Joining August 1. Koi fee nahi lagti.",0,safe,whatsapp
-"NSP scholarship ka paisa aa gaya account mein. Rs.12000 credit hua. Bank statement check karo.",0,safe,whatsapp
-"Internshala pe internship lagi hai graphic designer ki. Stipend Rs.8000 per month. Interview clear ho gaya.",0,safe,whatsapp
-"College placement cell se message: TCS pool campus drive kal. Registration free hai. Resume leke aana.",0,safe,whatsapp
-"Exam timetable aa gaya college portal pe. Download karo student ID se. Date sheet May se start ho rahi hai.",0,safe,whatsapp
-"Fake government job portal. sarkari-job-2024.com is fraud site. Real government jobs at sarkari.com and naukri.com",1,job_fee,web
-"Phishing link claiming to be HDFC net banking. hdfc-bank-login.in is fake. Real site is hdfcbank.com only.",1,otp_fraud,web
-"WhatsApp forward claiming free data recharge by forwarding message. Jio and Airtel do not give free recharge this way.",1,unknown_scam,whatsapp
-"Fake LinkedIn job offer from fake recruiter. Pay Rs.1000 for background verification before interview. Real companies never do this.",1,job_fee,email
-"Telegram channel claiming to give NSE BSE tips. Pay Rs.2000 for premium tips. Guaranteed profit. Fraud scheme.",1,unknown_scam,whatsapp
-"Your Amazon Pay balance expiring tonight. Click link to save balance. Link: amzn-pay-save.com is fake phishing site.",1,otp_fraud,whatsapp
-"Fake IRCTC prize. You won train ticket. Pay Rs.200 booking charges. IRCTC never gives free ticket prizes.",1,lottery_prize,sms
-"Fake PMKVY certificate. Pay Rs.1500 to get government skill certificate without training. Fraud scheme.",1,unknown_scam,whatsapp
-"Your college is asking for donations for fest. Pay to personal account 9876543210. Verify with college office first.",1,unknown_scam,whatsapp
-"Fake cyber crime department. Your IP used for illegal activity. Pay Rs.5000 fine or face arrest. Government impersonation.",1,unknown_scam,whatsapp
-"Your application for Apple internship is under review. Technical round scheduled via email. No charges apply.",0,safe,email
-"Deloitte USI campus hiring. Aptitude test on May 22. Register free at deloitte.com/careers. Result in 3 days.",0,safe,email
-"Your college startup incubation center has approved your application. Funding of Rs.1 lakh available. Meet on June 1.",0,safe,email
-"Smart India Hackathon 2024 results: Your team selected for national finals. Travel and accommodation provided by government.",0,safe,email
-"National Service Scheme camp registration open. 10 day camp in June. Certificate and extra marks. Free registration.",0,safe,email
-"Your scholarship from Tata Trust approved. Rs.50000 per year for 4 years. Letter sent by post to registered address.",0,safe,email
-"Bank of Baroda education loan sanctioned for Rs.5 lakh. No processing fee for students. Visit branch with documents.",0,safe,email
-"Your college canteen smart card has Rs.200 low balance. Recharge at college admin or online at college portal.",0,safe,sms
-"Anti-Ragging helpline: 1800-180-5522 is available 24x7. Report any incident anonymously. Your identity protected.",0,safe,web
-"PM eVIDYA digital education platform available free at diksha.gov.in. All subjects class 1 to 12 free content.",0,safe,web
+"text","label","category","source"
+"Congratulations! You have been selected for internship at Internshala partner company. Pay Rs.1500 registration fee on Paytm 9876543210 to confirm your slot.","1","internship_fee","dataset"
+"Pay Rs.999 joining fee to confirm your work from home internship. Send to PhonePe 8765432109.","1","internship_fee","dataset"
+"You have WON Rs.25 lakh in KBC Lucky Draw! Pay Rs.1500 processing fee to claim prize.","1","lottery_prize","dataset"
+"Share your OTP to claim KBC prize of Rs.25 lakh. Contact kbc.prize@gmail.com urgently.","1","otp_fraud","dataset"
+"NSP Scholarship of Rs.25000 approved. Pay Rs.500 processing fee to PhonePe 8765432109.","1","scholarship_fee","dataset"
+"SBI account will be blocked. Verify KYC by sharing OTP sent to your number.","1","otp_fraud","dataset"
+"gooogle.com free recharge enter OTP to claim Rs.199 cashback today only","1","otp_fraud","dataset"
+"g00gle.com selected you for internship pay Rs.999 fee to confirm your slot immediately","1","internship_fee","dataset"
+"g0ogle.com job offer pay Rs.2000 training fee before joining date expires tonight","1","job_fee","dataset"
+"google-jobs-india.xyz apply now pay Rs.1500 registration fee","1","job_fee","dataset"
+"amazon-winner.xyz you won iPhone pay Rs.299 delivery charge to claim","1","lottery_prize","dataset"
+"sbi-kyc-update.xyz urgent KYC required login and share OTP with executive","1","otp_fraud","dataset"
+"http://university-portal-login.xyz/auth pay admission fee now","1","bank_impersonation","dataset"
+"http://sbi-kyc-verify.xyz/login urgent KYC update required enter OTP","1","otp_fraud","dataset"
+"http://amazon-lucky-winner.xyz/claim you won iPhone pay Rs.299","1","lottery_prize","dataset"
+"internsha1a.com internship offer selected pay Rs.1500 registration fee","1","internship_fee","dataset"
+"facebo0k.com account security alert share OTP to recover access","1","otp_fraud","dataset"
+"university-portal-login.xyz complete admission formalities pay Rs.5000 fee","1","bank_impersonation","dataset"
+"college-admission-portal.xyz your admission confirmed pay Rs.3000 processing fee","1","bank_impersonation","dataset"
+"Your TCS interview is scheduled at nextstep.tcs.com on Monday 10AM. No fee required.","0","safe","dataset"
+"Internshala confirmed your internship application. Login at internshala.com to proceed.","0","safe","dataset"
+"SBI bank: We will NEVER ask for your OTP. Report fraud at 1930 or visit sbi.co.in","0","safe","dataset"
+"Check scholarships.gov.in for NSP status.","0","safe","dataset"
+"Your Amazon order has been confirmed. Track at amazon.in. No additional charges.","0","safe","dataset"
+"Google Meet interview link sent to your email. Join at meet.google.com. No fees.","0","safe","dataset"
+"HDFC bank reminder: Never share OTP. Call 1800-202-6161 for support.","0","safe","dataset"
+"Your Infosys offer letter sent to registered email. Joining date 15th March. No charges.","0","safe","dataset"
+"NPTEL certificate exam fee Rs.1000 payable only at swayam.gov.in.","0","safe","dataset"
