@@ -18,9 +18,9 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# ═════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # SECTION 1 — Backend Import with Graceful Fallback
-# ═════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 
 SIMULATION_MODE = False
 IMPORT_ERRORS   = []
@@ -84,11 +84,14 @@ try:
 except Exception as e:
     SIMULATION_MODE = True
     IMPORT_ERRORS.append(str(e))
+    # Debug: print the error for testing
+    import traceback
+    IMPORT_ERRORS.append(traceback.format_exc())
 
 
-# ═════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # SECTION 2 — Simulation Engine (runs when imports fail)
-# ═════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 
 def _simulate_scan(text: str) -> dict:
     """
@@ -171,9 +174,9 @@ def _simulate_scan(text: str) -> dict:
     }
 
 
-# ═════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # SECTION 3 — Full Pipeline Runner
-# ═════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 
 def run_full_pipeline(text: str) -> dict:
     """
@@ -260,9 +263,9 @@ def get_action_safe(score: float, category: str, text: str) -> dict:
     }
 
 
-# ═════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # SECTION 4 — Demo Preset Messages
-# ═════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 
 PRESETS = {
     "🎭 Fake Internship": (
@@ -286,9 +289,9 @@ PRESETS = {
 }
 
 
-# ═════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # SECTION 5 — CSS Styling
-# ═════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 
 def inject_css():
     st.markdown("""
@@ -483,7 +486,7 @@ def inject_css():
         margin: 1.5rem 0;
     }
 
-    /* ── Text area ────────────────────────── */
+    /* ── Text area ─────────────���──────────── */
     .stTextArea textarea {
         background-color: #111827 !important;
         color: #e8eaf6 !important;
@@ -507,9 +510,9 @@ def inject_css():
     """, unsafe_allow_html=True)
 
 
-# ═════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # SECTION 6 — UI Helper Components
-# ═════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 
 def render_verdict_badge(label: str):
     css_class = {
@@ -659,16 +662,16 @@ def render_reasons(reasons: list, student_mode: bool, label: str = "SCAM"):
 
         st.markdown(f"**{i}.** {icon} {r}")
 
-# ═════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # SECTION 7 — Results Renderer
-# ═════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 
 def render_results(result: dict, student_mode: bool, label: str = "SCAM"):
     label      = result["label"]
     score      = result["final_score"]
     breakdown  = result["breakdown"]
     reasons    = result["reasons"]
-        # ← existing line
+         # ← existing line
     
     # ── Filter weak ML reason from display ───────────────────────
     filtered = [
@@ -817,12 +820,18 @@ def render_results(result: dict, student_mode: bool, label: str = "SCAM"):
         )
 
 
-# ═════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # SECTION 8 — Main App Layout
-# ═════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 
 def main():
     inject_css()
+
+    # ── Initialize session state early ─────────────────────────────
+    if "input_text" not in st.session_state:
+        st.session_state["input_text"] = ""
+    if "student_mode" not in st.session_state:
+        st.session_state["student_mode"] = False
 
     # ── Simulation mode banner ────────────────────────────────────
     if SIMULATION_MODE:
@@ -833,6 +842,10 @@ def main():
             '</div>',
             unsafe_allow_html=True,
         )
+        # Optional: Show import errors for debugging
+        if IMPORT_ERRORS:
+            with st.expander("🔧 Debug: Import Errors", expanded=False):
+                st.code("\n".join(IMPORT_ERRORS), language="text")
 
     # ── Hero section ──────────────────────────────────────────────
     st.markdown(
@@ -877,6 +890,7 @@ def main():
         with preset_cols[i]:
             if st.button(label, use_container_width=True, key=f"preset_{i}"):
                 st.session_state["input_text"] = msg
+                st.rerun()
 
     st.markdown("---")
 
@@ -982,6 +996,6 @@ def main():
     )
 
 
-# ═════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 if __name__ == "__main__" or True:
     main()
