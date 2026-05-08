@@ -140,6 +140,8 @@ campus-fraud-shield/
 - KMeans clustering to find scam pattern groups
 
 ---
+## Additional Documents
+- AI Disclosure: [AI_DISCLOSURE.md](AI_DISCLOSURE.md)
 
 ## 🛡️ Override Logic
 
