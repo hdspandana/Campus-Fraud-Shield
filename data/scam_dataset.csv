@@ -1,46 +1,29 @@
-text,label
-"URGENT! Pay ₹999 registration fee via GPay to confirm your Google internship. Limited slots!!!",scam
-"Congratulations! You won ₹50000 in lucky draw. Pay ₹299 processing fee on PhonePe to claim prize now!",scam
-"Your Amazon order is on hold. Scan QR and pay ₹49 customs fee within 2 hours or parcel returned.",scam
-"Work from home confirmed! Pay ₹500 refundable deposit via UPI to activate your employee account today.",scam
-"Dear student pay ₹199 via Paytm to release your NPTEL certificate. Valid today only. Urgent!!!",scam
-"Your SBI account is BLOCKED! Verify Aadhar + OTP at http://sbi-secure-login.tk/verify immediately.",scam
-"HDFC Alert: Suspicious login detected. Update KYC now at hdfc-kyc-update.xyz or account suspended.",scam
-"Your UPI PIN has expired. Re-enter PIN and bank account at bit.ly/upi-renew to continue transactions.",scam
-"Your PAN card is linked to illegal activity. Call 9988776655 and share Aadhar OTP to avoid arrest.",scam
-"Google Account: Unusual sign-in blocked. Verify password at google-security-check.ml to restore access.",scam
-"Earn ₹5000/day from home! No experience needed. WhatsApp 9123456789. Only 3 slots. 100% guaranteed!",scam
-"You are SELECTED for Data Entry job. Salary ₹25000/month. No interview. Send Aadhar copy to confirm.",scam
-"Part time: Like YouTube videos and earn ₹300 per video! DM me on Instagram to start today!",scam
-"Campus placement at TCS! Selected candidates must pay ₹1500 training fee before joining.",scam
-"Saw your resume on Naukri. WFH job ₹40k/month. Share your bank account for salary setup process.",scam
-"Instagram seller: Designer bag ₹599 only! No COD only GPay advance. DM me to order. Limited stock!",scam
-"I am stuck abroad need urgent help. Send ₹5000 on GPay. I will return double when I come back.",scam
-"FREE iPhone 15 giveaway! Follow like share and pay ₹199 shipping fee to claim. Winners today!",scam
-"Selling NEET 2025 question paper for ₹2000. 100% authentic. WhatsApp me. Strictly confidential.",scam
-"Bro this app gives 3x returns in 7 days! I earned ₹15000. Join with my referral: bit.ly/earn3x",scam
-"Your account will be suspended. Verify OTP at http://verify-bank.tk now or lose access forever.",scam
-"Congratulations you are selected! Send your Aadhar card and bank details to claim your prize money.",scam
-"Free laptop giveaway for UTM students. Limited slots! Pay ₹99 courier charges to receive.",scam
-"ALERT: Your PhonePe account shows suspicious activity. Call 9876543210 immediately with your OTP.",scam
-"Win ₹1 lakh! Just share your UPI PIN with our agent for verification. Limited time offer!",scam
-"Hey! Internshala posted new software internships at Google. Check linkedin.com for details. Deadline Friday.",safe
-"Reminder: NPTEL swayam.gov.in enrollment closes April 30th. Register before the deadline!",safe
-"Campus placement by Infosys on May 5th. Register on unstop.com before May 3rd. Bring updated resume.",safe
-"Your Coursera Python certificate is ready. Download it from coursera.org under your profile section.",safe
-"Hackathon on dare2compete.com is open! Team of 3-4. Last date to apply is this Sunday.",safe
-"The assignment submission portal is open. Submit your project on the college ERP before 11:59 PM.",safe
-"Library books due date extended to next Friday. Return or renew online through college portal.",safe
-"Study group meeting tomorrow at 3pm in library room 204. Bring your notes for the exam prep.",safe
-"Placement drive by Wipro next week. Eligible students register on official college placement portal.",safe
-"New scholarship announced by government. Apply at scholarships.gov.in before March 31st.",safe
-"Check out this GitHub repo for DSA practice. It has 500+ problems with solutions. Very helpful.",safe
-"The canteen will be closed tomorrow due to renovation. Alternative food available in block B.",safe
-"HackerRank is hosting a coding challenge this weekend. Register free at hackerrank.com.",safe
-"Your semester results are out. Check on the official university portal with your enrollment number.",safe
-"Professor shared notes on the college LMS. Download before the exam next week.",safe
-"Your Aadhar card update is pending. Share OTP received on mobile to complete the process.",scam
-"Get rich quick! Invest ₹1000 and earn ₹10000 in 24 hours. Guaranteed returns. WhatsApp now!",scam
-"Your electricity bill is overdue. Pay ₹2340 via this link or connection will be cut in 2 hours.",scam
-"Job offer from MNC! Salary 8 LPA. No interview needed. Just pay ₹2000 for background verification.",scam
-"Amazon delivery agent: Your parcel stuck at customs. Pay ₹299 online to release immediately.",scam
+"text","label","category","source"
+"Congratulations! You have been selected for internship at Internshala partner company. Pay Rs.1500 registration fee on Paytm 9876543210 to confirm your slot.","1","internship_fee","dataset"
+"Pay Rs.999 joining fee to confirm your work from home internship. Send to PhonePe 8765432109.","1","internship_fee","dataset"
+"You have WON Rs.25 lakh in KBC Lucky Draw! Pay Rs.1500 processing fee to claim prize.","1","lottery_prize","dataset"
+"Share your OTP to claim KBC prize of Rs.25 lakh. Contact kbc.prize@gmail.com urgently.","1","otp_fraud","dataset"
+"NSP Scholarship of Rs.25000 approved. Pay Rs.500 processing fee to PhonePe 8765432109.","1","scholarship_fee","dataset"
+"SBI account will be blocked. Verify KYC by sharing OTP sent to your number.","1","otp_fraud","dataset"
+"gooogle.com free recharge enter OTP to claim Rs.199 cashback today only","1","otp_fraud","dataset"
+"g00gle.com selected you for internship pay Rs.999 fee to confirm your slot immediately","1","internship_fee","dataset"
+"g0ogle.com job offer pay Rs.2000 training fee before joining date expires tonight","1","job_fee","dataset"
+"google-jobs-india.xyz apply now pay Rs.1500 registration fee","1","job_fee","dataset"
+"amazon-winner.xyz you won iPhone pay Rs.299 delivery charge to claim","1","lottery_prize","dataset"
+"sbi-kyc-update.xyz urgent KYC required login and share OTP with executive","1","otp_fraud","dataset"
+"http://university-portal-login.xyz/auth pay admission fee now","1","bank_impersonation","dataset"
+"http://sbi-kyc-verify.xyz/login urgent KYC update required enter OTP","1","otp_fraud","dataset"
+"http://amazon-lucky-winner.xyz/claim you won iPhone pay Rs.299","1","lottery_prize","dataset"
+"internsha1a.com internship offer selected pay Rs.1500 registration fee","1","internship_fee","dataset"
+"facebo0k.com account security alert share OTP to recover access","1","otp_fraud","dataset"
+"university-portal-login.xyz complete admission formalities pay Rs.5000 fee","1","bank_impersonation","dataset"
+"college-admission-portal.xyz your admission confirmed pay Rs.3000 processing fee","1","bank_impersonation","dataset"
+"Your TCS interview is scheduled at nextstep.tcs.com on Monday 10AM. No fee required.","0","safe","dataset"
+"Internshala confirmed your internship application. Login at internshala.com to proceed.","0","safe","dataset"
+"SBI bank: We will NEVER ask for your OTP. Report fraud at 1930 or visit sbi.co.in","0","safe","dataset"
+"Check scholarships.gov.in for NSP status.","0","safe","dataset"
+"Your Amazon order has been confirmed. Track at amazon.in. No additional charges.","0","safe","dataset"
+"Google Meet interview link sent to your email. Join at meet.google.com. No fees.","0","safe","dataset"
+"HDFC bank reminder: Never share OTP. Call 1800-202-6161 for support.","0","safe","dataset"
+"Your Infosys offer letter sent to registered email. Joining date 15th March. No charges.","0","safe","dataset"
+"NPTEL certificate exam fee Rs.1000 payable only at swayam.gov.in.","0","safe","dataset"
