@@ -1,5 +1,35 @@
+# MSRIT_SentinalMinds  
 # Campus Fraud Shield 🛡️
 
+> AI-powered scam detection for Indian college students.  
+> Detects fake internships, OTP frauds, prize scams, scholarship frauds, and impersonation attacks in real time.
+
+🌐 **Live Demo:**  
+👉 https://campus-fraud-shield-indozz3ascav9w7pyysyvc.streamlit.app/
+
+---
+
+[![Streamlit](https://img.shields.io/badge/Built%20with-Streamlit-ff4b4b?logo=streamlit)](https://streamlit.io)
+[![Python](https://img.shields.io/badge/Python-3.10-blue?logo=python)](https://python.org)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+
+---
+
+## 🚀 Quick Start
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/yourname/campus-fraud-shield.git
+cd campus-fraud-shield
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Train the model (one time only)
+python train/train_model.py
+
+# 4. Run the app
+streamlit run app.py
 > AI-powered scam detection for Indian college students.  
 > Detects fake internships, OTP frauds, prize scams, and scholarship frauds in real time.
 
