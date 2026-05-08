@@ -1,13 +1,7 @@
 # core/rules_engine.py
-# ═════════════════════════════════════════════════════════════════
-# Pattern-based Rules Engine (Production Build)
-# Fast regex + keyword matching for known scam patterns
-# No ML required — pure logic, instant results
-# Covers 50+ scam signal patterns specific to Indian students
-# ═════════════════════════════════════════════════════════════════
-
 import re
 from typing import List, Dict, Tuple, Any
+from core.homoglyph_normalizer import find_spoofed_brands
 
 # Each pattern: (regex, score_weight, reason_string)
 FEE_PATTERNS = [
@@ -140,63 +134,85 @@ class RulesEngine:
     """
     Fast pattern-based scam detection engine.
     Analyzes strings using regex loops for deterministic validation.
+    Safe signals are suppressed when spoofed brand names are detected.
     """
 
     def analyze(self, text: str) -> Dict[str, Any]:
         text_lower = text.lower()
-        reasons = []
-        flags = []
-        raw_score = 0
+        reasons    = []
+        flags      = []
+        raw_score  = 0
+
+        # ── Check for spoofs BEFORE pattern loop ──────────────
+        # If spoof found → suppress ALL safe/negative signals
+        # because spoofed brand name makes all safety signals invalid
+        spoofs_found   = find_spoofed_brands(text)
+        spoof_detected = len(spoofs_found) > 0
 
         all_patterns = [
-            ("fee", FEE_PATTERNS),
-            ("otp", OTP_PATTERNS),
-            ("urgency", URGENCY_PATTERNS),
-            ("contact", CONTACT_PATTERNS),
-            ("payment", PAYMENT_PATTERNS),
-            ("prize", PRIZE_PATTERNS),
+            ("fee",       FEE_PATTERNS),
+            ("otp",       OTP_PATTERNS),
+            ("urgency",   URGENCY_PATTERNS),
+            ("contact",   CONTACT_PATTERNS),
+            ("payment",   PAYMENT_PATTERNS),
+            ("prize",     PRIZE_PATTERNS),
             ("selection", SELECTION_PATTERNS),
-            ("safe", SAFE_SIGNALS),
+            ("safe",      SAFE_SIGNALS),
         ]
 
         for group_name, patterns in all_patterns:
             for pattern, weight, reason in patterns:
                 if re.search(pattern, text_lower, re.IGNORECASE):
+
+                    # ── Suppress safe signals if spoof detected ──
+                    # A message with "g00gle" + "no fee required"
+                    # should NOT get the safe signal reduction
+                    if weight < 0 and spoof_detected:
+                        flags.append(
+                            f"safe_signal_suppressed"
+                            f"(spoof):{pattern[:20]}"
+                        )
+                        continue
+
                     raw_score += weight
                     if weight > 0:
                         reasons.append(reason)
                         flags.append(f"{group_name}:{pattern[:15]}")
 
-        score = max(0.0, min(100.0, float(raw_score)))
-        category = self._detect_category(text_lower)
-        extractions = self._extract_info(text)
+        score           = max(0.0, min(100.0, float(raw_score)))
+        category        = self._detect_category(text_lower)
+        extractions     = self._extract_info(text)
         display_reasons = list(dict.fromkeys(reasons))[:5]
 
         return {
-            "score": score,
-            "reasons": display_reasons,
-            "flags": flags,
-            "category": category,
+            "score":       score,
+            "reasons":     display_reasons,
+            "flags":       flags,
+            "category":    category,
             "extractions": extractions,
-            "raw_score": raw_score
+            "raw_score":   raw_score,
         }
 
     def _detect_category(self, text_lower: str) -> str:
         scores: Dict[str, int] = {}
         for category, patterns in CATEGORY_SIGNALS.items():
-            count = sum(1 for pattern in patterns if re.search(pattern, text_lower, re.IGNORECASE))
+            count = sum(
+                1 for pattern in patterns
+                if re.search(pattern, text_lower, re.IGNORECASE)
+            )
             if count > 0:
                 scores[category] = count
         return max(scores, key=scores.get) if scores else "unknown_scam"
 
     def _extract_info(self, text: str) -> Dict[str, Any]:
         phones = re.findall(PHONE_PATTERN, text)
+
         amounts = []
         for pattern in AMOUNT_PATTERNS:
             found = re.findall(pattern, text, re.IGNORECASE)
             amounts.extend(found)
         amounts = list(dict.fromkeys(amounts))
-        
+
         urls = []
         for pattern in URL_PATTERNS:
             found = re.findall(pattern, text, re.IGNORECASE)
@@ -204,24 +220,24 @@ class RulesEngine:
         urls = list(dict.fromkeys(urls))
 
         return {
-            "phones": [str(p) for p in phones[:3]],
+            "phones":  [str(p) for p in phones[:3]],
             "amounts": [str(a) for a in amounts[:3]],
-            "urls": [str(u) for u in urls[:3]]
+            "urls":    [str(u) for u in urls[:3]],
         }
 
     def get_triggered_rules(self, text: str) -> List[Dict[str, Any]]:
         text_lower = text.lower()
-        triggered = []
+        triggered  = []
 
         all_patterns = [
-            ("Fee Pattern", FEE_PATTERNS),
-            ("OTP Pattern", OTP_PATTERNS),
-            ("Urgency Pattern", URGENCY_PATTERNS),
-            ("Contact Pattern", CONTACT_PATTERNS),
-            ("Payment Pattern", PAYMENT_PATTERNS),
-            ("Prize Pattern", PRIZE_PATTERNS),
+            ("Fee Pattern",       FEE_PATTERNS),
+            ("OTP Pattern",       OTP_PATTERNS),
+            ("Urgency Pattern",   URGENCY_PATTERNS),
+            ("Contact Pattern",   CONTACT_PATTERNS),
+            ("Payment Pattern",   PAYMENT_PATTERNS),
+            ("Prize Pattern",     PRIZE_PATTERNS),
             ("Selection Pattern", SELECTION_PATTERNS),
-            ("Safe Signal", SAFE_SIGNALS),
+            ("Safe Signal",       SAFE_SIGNALS),
         ]
 
         for group_name, patterns in all_patterns:
@@ -229,10 +245,10 @@ class RulesEngine:
                 match = re.search(pattern, text_lower, re.IGNORECASE)
                 if match:
                     triggered.append({
-                        "group": group_name,
-                        "reason": reason,
-                        "weight": weight,
-                        "matched": str(match.group()),
-                        "is_positive": weight > 0
+                        "group":       group_name,
+                        "reason":      reason,
+                        "weight":      weight,
+                        "matched":     str(match.group()),
+                        "is_positive": weight > 0,
                     })
         return triggered

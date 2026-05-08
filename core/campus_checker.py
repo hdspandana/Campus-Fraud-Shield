@@ -3,6 +3,7 @@ import re
 import os
 import json
 from typing import List, Dict, Any, Tuple
+from core.homoglyph_normalizer import find_spoofed_brands, get_spoof_score
 
 # ── Load campus entities data ────────────────────────────────────
 _DATA_PATH = os.path.join(
@@ -226,7 +227,7 @@ LEGITIMATE_RANGES = {
 
 # ═════════════════════════════════════════════════════════════════
 class CampusChecker:
-    """Campus-specific expert rule engine with 6 checks."""
+    """Campus-specific expert rule engine with 7 checks."""
 
     def analyze(self, text: str) -> Dict[str, Any]:
         score          = 0.0
@@ -234,6 +235,16 @@ class CampusChecker:
         violations     = []
         entities_found = []
 
+        # ── Spoof check FIRST ─────────────────────────────────
+        # If spoof detected, score starts at 85-95 immediately
+        s, r, v, e = self._check_spoofed_brands(text)
+        spoof_detected = s > 0
+        score += s
+        reasons.extend(r)
+        violations.extend(v)
+        entities_found.extend(e)
+
+        # ── All other checks run on ORIGINAL text ─────────────
         s, r, v, e = self._check_fee_policy(text)
         score += s
         reasons.extend(r)
@@ -270,6 +281,11 @@ class CampusChecker:
         violations.extend(v)
         entities_found.extend(e)
 
+        # ── If spoof detected, floor score at 85 ──────────────
+        # Prevents safe signals from pulling score below 85
+        if spoof_detected:
+            score = max(score, 85.0)
+
         score          = max(0.0, min(100.0, score))
         reasons        = list(dict.fromkeys(reasons))[:5]
         violations     = list(dict.fromkeys(violations))
@@ -281,6 +297,33 @@ class CampusChecker:
             "violations":     violations,
             "entities_found": entities_found
         }
+
+    def _check_spoofed_brands(
+        self, text: str
+    ) -> Tuple[float, List[str], List[str], List[str]]:
+        """
+        Detect visual brand spoofing.
+        g00gle / gooogle / payтm = GUARANTEED SCAM score 85-95.
+
+        DESIGN RULE:
+        - get_spoof_score() handles ALL score logic internally
+        - This method just calls it and passes results through
+        - We do NOT re-run safety checks on normalized text
+        - Safe signals are NOT applied when spoof is detected
+        """
+        spoof_score, spoof_reasons = get_spoof_score(text)
+
+        if spoof_score == 0:
+            return 0.0, [], [], []
+
+        violations     = ["spoofed_brand_name"]
+        entities_found = []
+
+        spoofs = find_spoofed_brands(text)
+        for spoof in spoofs:
+            entities_found.append(f"spoofed:{spoof['matched_brand']}")
+
+        return spoof_score, spoof_reasons, violations, entities_found
 
     def _check_fee_policy(
         self, text: str
@@ -732,6 +775,7 @@ class CampusChecker:
     def get_triggered_rules(self, text: str) -> List[Dict[str, Any]]:
         triggered = []
         checks = [
+            (self._check_spoofed_brands,   "spoofed_brands"),
             (self._check_fee_policy,       "fee_policy"),
             (self._check_contact_policy,   "contact_policy"),
             (self._check_process_sequence, "process_sequence"),
@@ -769,17 +813,22 @@ if __name__ == "__main__":
 
     tests = [
         (
+            "Pay Rs.2000 to g00gle hr@g00gle.com",
+            "SCAM"
+        ),
+        (
+            "Internship at gooogle.com pay fee 9876543210",
+            "SCAM"
+        ),
+        (
+            "payтm 9876543210 send Rs.1500 registration fee",
+            "SCAM"
+        ),
+        (
             "Congratulations! You have been selected for internship "
             "at Internshala partner company. Pay Rs.1500 registration "
             "fee on Paytm 9876543210 to confirm your slot. "
             "Offer expires in 24 hours.",
-            "SCAM"
-        ),
-        (
-            "Dear student your application for software internship "
-            "has been approved. Pay Rs.2000 security deposit to "
-            "HRdept@gmail.com to get your offer letter. "
-            "Limited seats available.",
             "SCAM"
         ),
         (
@@ -789,25 +838,14 @@ if __name__ == "__main__":
             "SAFE"
         ),
         (
-            "NSP Scholarship of Rs.25000 approved for you. "
-            "Pay Rs.500 processing fee to PhonePe 8765432109. "
-            "Amount credited in 2 hours.",
-            "SCAM"
-        ),
-        (
-            "SBI account will be blocked. Verify your KYC immediately "
-            "by sharing OTP sent to your number. Call 9988001122 urgently.",
-            "SCAM"
-        ),
-        (
             "TCS NextStep interview scheduled for Thursday 10AM. "
             "Venue: TCS office Bangalore. Carry college ID and resume. "
             "No charges applicable.",
             "SAFE"
         ),
         (
-            "Your PM Scholarship amount of Rs.50000 per month approved. "
-            "Pay Rs.10000 processing fee to release funds.",
+            "SBI account will be blocked. Verify your KYC immediately "
+            "by sharing OTP sent to your number. Call 9988001122 urgently.",
             "SCAM"
         ),
     ]
@@ -823,8 +861,8 @@ if __name__ == "__main__":
             else "SUSPICIOUS" if score >= 40
             else "SAFE"
         )
-        print(f"\nText: {text[:65]}...")
-        print(f"Expected:   {expected}")
-        print(f"Score:      {score:.1f}/100 → {label}")
-        print(f"Violations: {result['violations'][:3]}")
-        print(f"Reasons:    {result['reasons'][:2]}")
+        status = "✅" if label == expected else "❌"
+        print(f"\n{status} Expected: {expected} | Got: {label} | Score: {score:.1f}")
+        print(f"   Text: {text[:65]}...")
+        print(f"   Violations: {result['violations'][:3]}")
+        print(f"   Reasons:    {result['reasons'][:2]}")
