@@ -1,31 +1,16 @@
-# Core ML
+streamlit==1.45.1
 sentence-transformers==2.7.0
-faiss-cpu==1.8.0
-scikit-learn==1.4.2
-torch==2.2.2
-transformers==4.40.0
-
-# Web framework
-streamlit==1.45.0
-
-# Data
-pandas==2.2.2
+scikit-learn==1.5.0
+faiss-cpu==1.8.0.post1
+torch==2.3.0
+transformers==4.41.2
 numpy==1.26.4
-
-# Visualization
+pandas==2.2.2
 plotly==5.22.0
-matplotlib==3.8.4
-
-# Domain checking
 tldextract==5.1.2
-
-# Utilities
-Pillow==10.3.0
-requests==2.31.0
+pillow==10.3.0
+matplotlib==3.9.0
+requests==2.32.3
 python-dotenv==1.0.1
-
-# Built-ins (listed for clarity)
-# sqlite3  — stdlib
-# re       — stdlib
-# json     — stdlib
-# os       — stdlib
+joblib==1.4.2
+scipy==1.13.1
