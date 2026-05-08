@@ -486,7 +486,7 @@ def inject_css():
         margin: 1.5rem 0;
     }
 
-    /* ── Text area ─────────────���──────────── */
+    /* ── Text area ────────────────────────── */
     .stTextArea textarea {
         background-color: #111827 !important;
         color: #e8eaf6 !important;
@@ -505,6 +505,20 @@ def inject_css():
         border-radius: 10px;
         padding: 0.75rem;
         border: 1px solid #1e2d40;
+    }
+    
+    /* ── Highlight animation for loaded text ─── */
+    .highlight-flash {
+        animation: highlight 0.6s ease-out;
+    }
+    
+    @keyframes highlight {
+        0% {
+            background-color: rgba(0, 212, 255, 0.3);
+        }
+        100% {
+            background-color: transparent;
+        }
     }
     </style>
     """, unsafe_allow_html=True)
@@ -883,20 +897,26 @@ def main():
 
     # ── Demo preset buttons ───────────────────────────────────────
     st.markdown("#### 🚀 Try a Demo Message")
-    st.caption("Click any button to auto-fill the text box with a real scam example")
+    st.caption("👇 Click any button below to instantly load an example message")
 
     preset_cols = st.columns(len(PRESETS))
     for i, (label, msg) in enumerate(PRESETS.items()):
         with preset_cols[i]:
             if st.button(label, use_container_width=True, key=f"preset_{i}"):
                 st.session_state["input_text"] = msg
+                st.session_state.pop("last_result", None)  # Clear previous results
                 st.rerun()
 
     st.markdown("---")
 
     # ── Text input area ───────────────────────────────────────────
     st.markdown("#### 📱 Paste Your Message Here")
-    st.caption("Paste any WhatsApp/SMS message to instantly check if it's a scam")
+    
+    # Show visual indicator if text is loaded from example
+    if st.session_state.get("input_text", "").strip():
+        st.caption("✨ Message loaded! Ready to scan. Click 'Scan Message' below.")
+    else:
+        st.caption("Paste any WhatsApp/SMS message to instantly check if it's a scam")
 
     user_input = st.text_area(
         label       = "Message to analyze",
@@ -925,7 +945,7 @@ def main():
         st.session_state["student_mode"] = student_mode
 
     with col_clear:
-        if st.button("🗑️ Clear", use_container_width=True):
+        if st.button("🗑️ Clear", use_container_width=True, key="clear_btn"):
             st.session_state["input_text"] = ""
             st.session_state.pop("last_result", None)
             st.rerun()
@@ -936,6 +956,7 @@ def main():
             "🔍 Scan Message",
             type             = "primary",
             use_container_width = True,
+            key              = "scan_btn",
         )
 
     # ── Guard: empty input ────────────────────────────────────────
