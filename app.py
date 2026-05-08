@@ -966,7 +966,7 @@ def main():
                     f"{result['_fallback_error']}"
                 )
 
-        render_results(result, student_mode,label)
+        render_results(result, student_mode)
 
     # ── Footer ────────────────────────────────────────────────────
     st.markdown("---")
