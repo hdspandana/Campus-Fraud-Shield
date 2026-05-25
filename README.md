@@ -13,9 +13,6 @@
 [![Python](https://img.shields.io/badge/Python-3.10-blue?logo=python)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
----
-🎥 **Project Demo Video:**  
-👉 https://drive.google.com/file/d/19x2GqE1q-aWZnfMUU94ibMMpgEZEzHUY/view?usp=drive_link
 
 ## 🚀 Quick Start
 
