@@ -35,6 +35,7 @@ try:
     from core.campus_checker  import CampusChecker
     from utils.action_advisor import get_action
     from utils.explainer      import Explainer
+    from utils.llm_explainer import get_llm_explanation 
 
     # Initialise engines (cached where possible)
     @st.cache_resource(show_spinner=False)
@@ -763,16 +764,41 @@ def render_results(result: dict, student_mode: bool, label: str = "SCAM"):
         )
 
     # ── Why we flagged this ───────────────────────────────────────
+    # ── Why we flagged this ───────────────────────────────────────
     if reasons:
         with st.expander(
             "🧠 Why did we flag this? — Detection Reasons",
             expanded=(label != "SAFE"),
-        ):
+       ):
             mode_label = "Student Mode 🎓" if student_mode else "Technical Mode 🔬"
             st.caption(f"Showing: {mode_label}")
             render_reasons(reasons, student_mode)
 
-    # ── Similar examples (ML) ─────────────────────────────────────
+# ▼▼▼ PASTE YOUR NEW BLOCK RIGHT HERE ▼▼▼
+
+# ── Gemini LLM Explanation ────────────────────────────────────
+    if label != "SAFE" and not SIMULATION_MODE:
+        with st.expander("🤖 AI Deep Analysis — Powered by Gemini", expanded=True):
+            with st.spinner("Gemini is analysing this message..."):
+                llm_text = get_llm_explanation(
+                st.session_state.get("last_text", ""),
+                score,
+                reasons,
+                result.get("category", "suspicious")
+                )
+        if llm_text:
+            st.markdown(
+                f'<div style="background:#0d1b2a;border-radius:10px;'
+                f'padding:1.2rem;border:1px solid #1565c0;line-height:1.7;">'
+                f'{llm_text}'
+                f'</div>',
+                unsafe_allow_html=True
+            )
+            st.caption("✨ Gemini 1.5 Flash · LLM layer on top of 4-engine pipeline")
+        else:
+            st.caption("⚠️ Gemini unavailable — set GEMINI_API_KEY in .env")
+
+# ── Similar examples (ML) ─────────────────────────────────────   ← this line already exists
     ml_data = breakdown.get("ml", {})
     similar = ml_data.get("similar", [])
     if similar and not SIMULATION_MODE:
@@ -1002,6 +1028,7 @@ def main():
                 )
 
         render_results(result, student_mode)
+
 
     # ── Footer ────────────────────────────────────────────────────
     st.markdown("---")
