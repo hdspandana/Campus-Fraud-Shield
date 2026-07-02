@@ -9,3 +9,4 @@ transformers
 tldextract
 python-dotenv
 requests
+google-genai
