@@ -4,7 +4,7 @@
 > AI-powered scam detection for Indian college students.  
 > Detects fake internships, OTP frauds, prize scams, scholarship frauds, and impersonation attacks in real time.
 
-🌐 **Live Demo:**  
+ **Live Demo:**  
 👉 https://campus-fraud-shield-indozz3ascav9w7pyysyvc.streamlit.app/
 
 ---
@@ -14,7 +14,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 
-## 🚀 Quick Start
+##  Quick Start
 
 ```bash
 # 1. Clone the repo
@@ -38,7 +38,7 @@ streamlit run app.py
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ```bash
 # 1. Clone the repo
@@ -57,7 +57,7 @@ streamlit run app.py
 
 ---
 
-## 🧠 How It Works
+##  How It Works
 
 ```
 Your Message
@@ -84,7 +84,7 @@ Your Message
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 campus-fraud-shield/
@@ -130,14 +130,14 @@ campus-fraud-shield/
 
 | Category | Example |
 |---|---|
-| 🎭 Fake Internship | "Pay ₹999 registration fee to confirm slot" |
-| 💼 Fake Job | "Pay ₹5000 training fee before joining TCS" |
-| 🏆 Prize/Lottery | "You won KBC ₹25 lakh — pay ₹1500 to claim" |
-| 🔐 OTP Fraud | "Share OTP to unblock your SBI account" |
-| 📚 Scholarship Fraud | "NSP scholarship ₹25000 — pay ₹500 to release" |
-| 🏦 Bank Impersonation | "HDFC account blocked — verify KYC on sbi-kyc.xyz" |
-| 🏛️ Govt Scheme Fraud | "Free laptop scheme — pay ₹1500 delivery charge" |
-| ⏰ Part-Time Scam | "Earn ₹500/hr liking YouTube videos — pay ₹999" |
+|  Fake Internship | "Pay ₹999 registration fee to confirm slot" |
+|  Fake Job | "Pay ₹5000 training fee before joining TCS" |
+|  Prize/Lottery | "You won KBC ₹25 lakh — pay ₹1500 to claim" |
+|  OTP Fraud | "Share OTP to unblock your SBI account" |
+|  Scholarship Fraud | "NSP scholarship ₹25000 — pay ₹500 to release" |
+|  Bank Impersonation | "HDFC account blocked — verify KYC on sbi-kyc.xyz" |
+|  Govt Scheme Fraud | "Free laptop scheme — pay ₹1500 delivery charge" |
+|  Part-Time Scam | "Earn ₹500/hr liking YouTube videos — pay ₹999" |
 
 ---
 
@@ -172,7 +172,7 @@ campus-fraud-shield/
 ## Additional Documents
 - AI Disclosure: [AI_DISCLOSURE.md](AI_DISCLOSURE.md)
 
-## 🛡️ Override Logic
+##  Override Logic
 
 ```python
 # These always force SCAM regardless of weighted score
@@ -198,19 +198,19 @@ After training on `scam_dataset.csv`:
 
 ---
 
-## 🆘 Emergency Resources
+##  Emergency Resources
 
 | Resource | Details |
 |---|---|
-| 📞 Cyber Crime Helpline | **1930** (24×7) |
-| 🌐 Report Online | [cybercrime.gov.in](https://cybercrime.gov.in) |
-| 🏦 SBI Fraud | 1800-11-2211 |
-| 🏦 HDFC Fraud | 1800-202-6161 |
-| 🏦 ICICI Fraud | 1800-1080 |
+|  Cyber Crime Helpline | **1930** (24×7) |
+|  Report Online | [cybercrime.gov.in](https://cybercrime.gov.in) |
+|  SBI Fraud | 1800-11-2211 |
+|  HDFC Fraud | 1800-202-6161 |
+|  ICICI Fraud | 1800-1080 |
 
 ---
 
-## 🏆 Built For
+##  Built For
 
 Indian college students hackathon — protecting students from:
 - Fake internship fee frauds
@@ -221,6 +221,6 @@ Indian college students hackathon — protecting students from:
 
 ---
 
-## 📄 License
+##  License
 
 MIT License — free to use, modify, and distribute.
