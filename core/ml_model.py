@@ -12,7 +12,6 @@ from typing import List, Tuple, Dict, Any
 from sentence_transformers import SentenceTransformer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
-import streamlit as st
 
 # ── Configuration ────────────────────────────────────────────────
 MODEL_NAME = "all-MiniLM-L6-v2"
@@ -35,6 +34,7 @@ class SemanticScamClassifier:
         self.embedder: SentenceTransformer = None
         self.classifier: LogisticRegression = None
         self.is_trained = False
+        self.cv_accuracy = None  # set by fit(); stays None if loaded from disk
 
         # Training data storage for similarity lookup
         self.training_texts: List[str] = []
@@ -83,6 +83,33 @@ class SemanticScamClassifier:
             random_state=42,
             n_jobs=-1  # Use all CPU cores
         )
+
+        # ── Honest performance estimate ──────────────────────────
+        # Fitting and scoring on the same data (training accuracy) is
+        # misleadingly optimistic, especially on a small dataset — a
+        # linear model can trivially memorize <100 examples. Stratified
+        # k-fold cross-validation gives a held-out estimate instead.
+        # This is the number that should ever be quoted anywhere
+        # (README, pitch, etc.) — never the training-set score.
+        labels_arr = np.array(labels)
+        min_class_count = int(min((labels_arr == 0).sum(), (labels_arr == 1).sum()))
+        n_splits = min(5, min_class_count)
+        self.cv_accuracy = None
+        if n_splits >= 2:
+            from sklearn.model_selection import StratifiedKFold, cross_val_score
+            cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
+            cv_scores = cross_val_score(
+                LogisticRegression(C=1.0, class_weight="balanced", max_iter=1000, random_state=42),
+                embeddings, labels, cv=cv, scoring="accuracy"
+            )
+            self.cv_accuracy = float(cv_scores.mean())
+            print(f"📊 {n_splits}-fold cross-validated accuracy (held-out estimate): "
+                  f"{self.cv_accuracy:.2%} (± {cv_scores.std():.2%})")
+        else:
+            print("⚠️  Too few examples per class for cross-validation — "
+                  "skipping honest accuracy estimate. Add more labeled data.")
+
+        # Fit the final classifier on all available data for deployment
         self.classifier.fit(embeddings, labels)
 
         # Store training data for similarity lookup
@@ -91,7 +118,9 @@ class SemanticScamClassifier:
         self.training_embeddings = embeddings
         self.is_trained = True
 
-        print(f"✅ Training complete. Accuracy on training set: {self.classifier.score(embeddings, labels):.2%}")
+        train_acc = self.classifier.score(embeddings, labels)
+        print(f"✅ Training complete. Training-set accuracy: {train_acc:.2%} "
+              f"(NOT a reliable performance estimate — use the cross-validated accuracy above instead)")
         return self
 
     def predict_proba(self, text: str) -> Tuple[float, str]:
@@ -256,14 +285,20 @@ class SemanticScamClassifier:
         )
 
 
-# ── Streamlit Caching (IMPORTANT for performance) ────────────────
-@st.cache_resource
+# ── Cached instance ────────────────────────────────────────────
+# Plain module-level singleton, not a Streamlit cache decorator —
+# core/ml_model.py is business logic and shouldn't depend on the UI
+# framework. The actual "load once per process" caching lives in
+# core/pipeline.py's load_ml_model() (used by both app.py and api.py).
+_classifier_instance = None
+
+
 def get_semantic_classifier() -> SemanticScamClassifier:
-    """
-    Get or create cached classifier instance.
-    This ensures the model is loaded only once per app run.
-    """
-    return SemanticScamClassifier()
+    """Get or create the shared classifier instance for this process."""
+    global _classifier_instance
+    if _classifier_instance is None:
+        _classifier_instance = SemanticScamClassifier()
+    return _classifier_instance
 
 
 # ── Example Usage (for testing) ──────────────────────────────────

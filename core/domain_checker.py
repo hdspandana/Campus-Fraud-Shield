@@ -8,8 +8,27 @@
 # ═════════════════════════════════════════════════════════════════
 
 import re
+import time
 import tldextract
+import requests
 from typing import List, Dict, Any, Tuple
+
+try:
+    from config import GOOGLE_SAFE_BROWSING_KEY, VIRUSTOTAL_KEY
+except ImportError:
+    # Fallback so this module still works if imported standalone / in tests
+    import os
+    GOOGLE_SAFE_BROWSING_KEY = os.getenv("GOOGLE_SAFE_BROWSING_API_KEY", "")
+    VIRUSTOTAL_KEY = os.getenv("VIRUSTOTAL_API_KEY", "")
+
+# ── Simple in-memory cache for threat-intel lookups ────────────────
+# Avoids re-querying the same domain/URL repeatedly within one running
+# process (Streamlit session), which would otherwise burn through free
+# API quotas fast. Not persisted across restarts — that's fine here,
+# since the point is just to avoid duplicate calls in a single session.
+_THREAT_INTEL_CACHE: Dict[str, Tuple[float, float, List[str]]] = {}
+_THREAT_INTEL_CACHE_TTL_SECONDS = 3600
+_THREAT_INTEL_TIMEOUT_SECONDS = 4
 
 # ── Commonly Impersonated Brands ──────────────────────────────────
 COMMONLY_IMPERSONATED = {
@@ -315,7 +334,16 @@ class DomainChecker:
         if mh_score > 0:
             red_flags += 1
 
-        # ── 10. Compound red flag bonus ───────────────────────────
+        # ── 10. Real-time threat intelligence (VirusTotal / Safe Browsing) ──
+        # Only fires if API keys are configured; silently skipped otherwise
+        # so this never breaks the app for anyone without keys set up.
+        ti_score, ti_reasons = self._check_threat_intel(domains, urls)
+        score   += ti_score
+        reasons.extend(ti_reasons)
+        if ti_score > 0:
+            red_flags += 1
+
+        # ── 11. Compound red flag bonus ───────────────────────────
         if red_flags >= 3:
             score += 25
             reasons.append(
@@ -626,6 +654,138 @@ class DomainChecker:
                 )
                 break
 
+        return score, reasons
+
+    # ── Check: Real-time Threat Intelligence (VirusTotal + Safe Browsing) ──
+    def _check_threat_intel(
+        self, domains: List[str], urls: List[str]
+    ) -> Tuple[float, List[str]]:
+        """
+        Cross-references domains/URLs against VirusTotal and Google Safe
+        Browsing. Both are optional — if their API keys aren't set in
+        .env, this returns (0.0, []) immediately with no network calls,
+        so the app works identically to before for anyone without keys.
+
+        Capped to the first 2 domains/URLs per scan to bound latency and
+        protect free-tier API quotas (both VT and GSB free tiers are
+        rate-limited per day).
+        """
+        if not GOOGLE_SAFE_BROWSING_KEY and not VIRUSTOTAL_KEY:
+            return 0.0, []
+
+        score   = 0.0
+        reasons = []
+
+        if VIRUSTOTAL_KEY:
+            for domain in domains[:2]:
+                vt_score, vt_reasons = self._query_virustotal(domain)
+                score += vt_score
+                reasons.extend(vt_reasons)
+
+        if GOOGLE_SAFE_BROWSING_KEY:
+            for url in urls[:2]:
+                gsb_score, gsb_reasons = self._query_safe_browsing(url)
+                score += gsb_score
+                reasons.extend(gsb_reasons)
+
+        return score, reasons
+
+    def _cache_get(self, key: str):
+        cached = _THREAT_INTEL_CACHE.get(key)
+        if cached is None:
+            return None
+        score, reasons, cached_at = cached
+        if time.time() - cached_at > _THREAT_INTEL_CACHE_TTL_SECONDS:
+            del _THREAT_INTEL_CACHE[key]
+            return None
+        return score, reasons
+
+    def _cache_set(self, key: str, score: float, reasons: List[str]):
+        _THREAT_INTEL_CACHE[key] = (score, reasons, time.time())
+
+    def _query_virustotal(self, domain: str) -> Tuple[float, List[str]]:
+        cache_key = f"vt:{domain}"
+        cached = self._cache_get(cache_key)
+        if cached is not None:
+            return cached
+
+        score, reasons = 0.0, []
+        try:
+            resp = requests.get(
+                f"https://www.virustotal.com/api/v3/domains/{domain}",
+                headers={"x-apikey": VIRUSTOTAL_KEY},
+                timeout=_THREAT_INTEL_TIMEOUT_SECONDS,
+            )
+            if resp.status_code == 200:
+                stats = (
+                    resp.json()
+                    .get("data", {})
+                    .get("attributes", {})
+                    .get("last_analysis_stats", {})
+                )
+                malicious = stats.get("malicious", 0)
+                suspicious = stats.get("suspicious", 0)
+                if malicious > 0:
+                    score = min(60.0, 15.0 * malicious)
+                    reasons.append(
+                        f"🚨 VirusTotal: {malicious} security vendor(s) "
+                        f"flagged '{domain}' as malicious"
+                    )
+                elif suspicious > 0:
+                    score = min(30.0, 10.0 * suspicious)
+                    reasons.append(
+                        f"⚠️ VirusTotal: {suspicious} security vendor(s) "
+                        f"flagged '{domain}' as suspicious"
+                    )
+            # Non-200 (rate limit, unknown domain, bad key, etc.) is
+            # treated as "no data" rather than an error — fail open.
+        except Exception:
+            # Network error, timeout, malformed response, etc.
+            # Fail open: threat-intel is a bonus signal, never a
+            # single point of failure for the whole detection pipeline.
+            pass
+
+        self._cache_set(cache_key, score, reasons)
+        return score, reasons
+
+    def _query_safe_browsing(self, url: str) -> Tuple[float, List[str]]:
+        cache_key = f"gsb:{url}"
+        cached = self._cache_get(cache_key)
+        if cached is not None:
+            return cached
+
+        score, reasons = 0.0, []
+        try:
+            resp = requests.post(
+                "https://safebrowsing.googleapis.com/v4/threatMatches:find",
+                params={"key": GOOGLE_SAFE_BROWSING_KEY},
+                json={
+                    "client": {"clientId": "campus-fraud-shield", "clientVersion": "1.0"},
+                    "threatInfo": {
+                        "threatTypes": [
+                            "MALWARE", "SOCIAL_ENGINEERING",
+                            "UNWANTED_SOFTWARE", "POTENTIALLY_HARMFUL_APPLICATION",
+                        ],
+                        "platformTypes": ["ANY_PLATFORM"],
+                        "threatEntryTypes": ["URL"],
+                        "threatEntries": [{"url": url}],
+                    },
+                },
+                timeout=_THREAT_INTEL_TIMEOUT_SECONDS,
+            )
+            if resp.status_code == 200:
+                matches = resp.json().get("matches", [])
+                if matches:
+                    threat_type = matches[0].get("threatType", "known threat")
+                    score = 55.0
+                    reasons.append(
+                        f"🚨 Google Safe Browsing: URL matches known "
+                        f"{threat_type.replace('_', ' ').title()} database"
+                    )
+        except Exception:
+            pass
+
+        self._cache_set(cache_key, score, reasons)
         return score, reasons
 
     # ── Check 8: Brand Impersonation Patterns ─────────────────────

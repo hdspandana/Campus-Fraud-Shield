@@ -1,12 +1,23 @@
-streamlit
-sentence-transformers
-scikit-learn
-faiss-cpu
-numpy
-pandas
-torch
-transformers
-tldextract
-python-dotenv
-requests
-google-genai
+# Pinned with the compatible-release operator (~=) so patch/minor
+# fixes still install automatically, but a future major release
+# (e.g. numpy 3.x, pandas 4.x) won't silently swap in and break things
+# without you noticing. Versions below were the latest stable at time
+# of pinning (July 2026) - bump deliberately, and re-run train_model.py
+# + smoke-test app.py/api.py after any bump.
+
+streamlit~=1.58
+sentence-transformers~=5.6
+scikit-learn~=1.9
+faiss-cpu~=1.14
+numpy~=2.5
+pandas~=3.0
+torch~=2.12
+transformers~=5.13
+tldextract~=5.3
+python-dotenv~=1.2
+requests~=2.34
+google-genai~=2.10
+
+# REST API layer
+fastapi~=0.140
+uvicorn[standard]~=0.51
