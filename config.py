@@ -9,7 +9,6 @@ load_dotenv()
 # ─── API Keys ────────────────────────────────────────────────────────────────
 GOOGLE_SAFE_BROWSING_KEY = os.getenv("GOOGLE_SAFE_BROWSING_API_KEY", "")
 VIRUSTOTAL_KEY           = os.getenv("VIRUSTOTAL_API_KEY", "")
-ADMIN_PASSWORD           = os.getenv("ADMIN_PASSWORD", "cfs_admin_2024")
 
 # ─── Scoring Weights ─────────────────────────────────────────────────────────
 WEIGHTS = {
