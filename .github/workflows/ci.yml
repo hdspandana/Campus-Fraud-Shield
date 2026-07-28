@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Run tests
+        run: |
+          pytest --cov=core --cov-report=term-missing
+
+      # Note: this installs the full requirements.txt (torch, faiss,
+      # etc.), which makes CI a few minutes slower than strictly
+      # necessary — the test suite itself doesn't need the heavy ML
+      # deps (it uses dependency injection / fakes for those). If CI
+      # speed becomes annoying, split requirements.txt into a
+      # requirements-core.txt (rules/domain engines only) that this
+      # workflow installs instead. Not done here to keep things simple
+      # for now.

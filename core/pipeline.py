@@ -14,10 +14,19 @@
 import os
 import sys
 import time
+import logging
 import traceback
 from functools import lru_cache
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# ── Logging ────────────────────────────────────────────────────────
+# A library module shouldn't call logging.basicConfig() itself (that's
+# an entrypoint's job — api.py / app.py decide handlers/format), it
+# should just grab a named logger. If nothing configures logging,
+# Python's default "handler of last resort" still prints warnings/
+# errors to stderr, so this is never silent even with zero setup.
+logger = logging.getLogger("campus_fraud_shield")
 
 SIMULATION_MODE = False
 IMPORT_ERRORS = []
@@ -32,6 +41,10 @@ except Exception as e:
     SIMULATION_MODE = True
     IMPORT_ERRORS.append(str(e))
     IMPORT_ERRORS.append(traceback.format_exc())
+    logger.error(
+        "Falling back to SIMULATION_MODE — real detection engines "
+        "failed to import: %s", e, exc_info=True
+    )
 
 
 # ────────────────────────────────────────────────────────────────
@@ -178,7 +191,7 @@ def get_action_safe(score: float, category: str, text: str) -> dict:
         if not SIMULATION_MODE:
             return get_action(score, category, text)
     except Exception:
-        pass
+        logger.warning("get_action() failed, using fallback action advice", exc_info=True)
     return {
         "steps": ["Do NOT pay any fee", "Block the sender immediately",
                   "Report at cybercrime.gov.in", "Call helpline 1930"],
@@ -193,11 +206,24 @@ def get_action_safe(score: float, category: str, text: str) -> dict:
 # Main entrypoint — the ONE function both app.py and api.py call
 # ────────────────────────────────────────────────────────────────
 
-def run_full_pipeline(text: str) -> dict:
+def run_full_pipeline(
+    text: str,
+    scorer=None,
+    ml_clf=None,
+    history=None,
+) -> dict:
     """
     Run all 4 engines and return a unified result dict. Falls back to
     simulation if any engine throws — a bad scan should never take
     down the whole app/API.
+
+    scorer / ml_clf / history are optional dependency-injection points:
+    - app.py (Streamlit) calls this with no args — defaults kick in and
+      call the normal cached loaders, so existing call sites don't
+      need to change.
+    - api.py (FastAPI) supplies these via Depends(), so tests can swap
+      in fakes/mocks through app.dependency_overrides without needing
+      to monkey-patch this module's internals.
     """
     if SIMULATION_MODE:
         result = _simulate_scan(text)
@@ -205,9 +231,9 @@ def run_full_pipeline(text: str) -> dict:
         return result
 
     try:
-        scorer = load_scorer()
-        ml_clf = load_ml_model()
-        history = load_history()
+        scorer  = scorer  if scorer  is not None else load_scorer()
+        ml_clf  = ml_clf  if ml_clf  is not None else load_ml_model()
+        history = history if history is not None else load_history()
 
         ml_score, ml_reason = ml_clf.predict_proba(text)
         ml_similar = ml_clf.get_similar_training_examples(text, n=3)
@@ -236,11 +262,15 @@ def run_full_pipeline(text: str) -> dict:
                 score=result["final_score"],
             )
         except Exception:
-            pass  # non-critical
+            # Non-critical: failing to log this scan to history should
+            # never break the scan result itself, but we do want to
+            # know about it rather than silently losing the failure.
+            logger.warning("Failed to record scan to history", exc_info=True)
 
         return result
 
     except Exception as e:
+        logger.error("run_full_pipeline failed, falling back to simulation for this scan: %s", e, exc_info=True)
         result = _simulate_scan(text)
         result["action"] = get_action_safe(result["final_score"], result["category"], text)
         result["_fallback_error"] = str(e)
