@@ -15,6 +15,7 @@
 # ═════════════════════════════════════════════════════════════════
 
 import os
+import re
 import sys
 from typing import Dict, Any, List
 
@@ -141,7 +142,8 @@ class FraudScorer:
             rules_score=rules_score,
             campus_score=campus_score,
             domain_score=domain_score,
-            violations=campus_result.get("violations", [])
+            violations=campus_result.get("violations", []),
+            domain_reasons=domain_result.get("reasons", []),
         )
 
         # ────────────────────────────────────────────────────────
@@ -256,7 +258,35 @@ class FraudScorer:
         campus_score: float,
         domain_score: float,
         violations: List[str],
+        domain_reasons: List[str] = None,
     ):
+        domain_reasons = domain_reasons or []
+
+        # ── Real-time threat-intel hit (VirusTotal / Safe Browsing) ──
+        # A confirmed hit from these is a near-zero-false-positive
+        # signal (a real security-vendor consensus, or Google's own
+        # blocklist) — strong enough that it shouldn't just get
+        # averaged down by the other 3 engines like an ordinary
+        # signal would. Same reasoning as the OTP override below.
+        #
+        # Safe Browsing: any match at all is high-confidence (Google
+        # doesn't list URLs speculatively).
+        if any("Google Safe Browsing" in r for r in domain_reasons):
+            return max(weighted_score, 90.0), (
+                "Google Safe Browsing confirmed threat match"
+            )
+
+        # VirusTotal: require 2+ vendors agreeing (a single vendor can
+        # be a one-off false positive; 2+ independent vendors agreeing
+        # is a much stronger signal), per the threshold discussed.
+        for r in domain_reasons:
+            match = re.search(r"VirusTotal:\s*(\d+)\s*security vendor", r)
+            if match and int(match.group(1)) >= 2:
+                vendor_count = int(match.group(1))
+                return max(weighted_score, 85.0), (
+                    f"VirusTotal: {vendor_count} security vendors flagged "
+                    f"this domain as malicious"
+                )
 
         # OTP always scam
         if any("otp" in v.lower() for v in violations):
