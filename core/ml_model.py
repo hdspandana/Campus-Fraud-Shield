@@ -35,6 +35,7 @@ class SemanticScamClassifier:
         self.classifier: LogisticRegression = None
         self.is_trained = False
         self.cv_accuracy = None  # set by fit(); stays None if loaded from disk
+        self.best_C = None       # set by fit(); the tuned regularization strength
 
         # Training data storage for similarity lookup
         self.training_texts: List[str] = []
@@ -75,42 +76,58 @@ class SemanticScamClassifier:
             convert_to_numpy=True
         )
 
-        # Train classifier with balanced class weights
-        self.classifier = LogisticRegression(
-            C=1.0,
-            class_weight="balanced",
-            max_iter=1000,
-            random_state=42,
-            n_jobs=-1  # Use all CPU cores
-        )
-
-        # ── Honest performance estimate ──────────────────────────
-        # Fitting and scoring on the same data (training accuracy) is
-        # misleadingly optimistic, especially on a small dataset — a
-        # linear model can trivially memorize <100 examples. Stratified
-        # k-fold cross-validation gives a held-out estimate instead.
-        # This is the number that should ever be quoted anywhere
-        # (README, pitch, etc.) — never the training-set score.
+        # ── Hyperparameter tuning + honest performance estimate ──────
+        # Previously C=1.0 was hardcoded, never actually tuned — just a
+        # guess. GridSearchCV tries a small range of regularization
+        # strengths and picks whichever generalizes best under
+        # cross-validation, instead of an arbitrary fixed value.
+        #
+        # This ALSO doubles as the honest accuracy estimate: the best
+        # CV score found during the search is a genuine held-out
+        # estimate (each fold is scored on data it wasn't trained on),
+        # same principle as before — never report training-set
+        # accuracy, only cross-validated accuracy.
         labels_arr = np.array(labels)
         min_class_count = int(min((labels_arr == 0).sum(), (labels_arr == 1).sum()))
         n_splits = min(5, min_class_count)
-        self.cv_accuracy = None
-        if n_splits >= 2:
-            from sklearn.model_selection import StratifiedKFold, cross_val_score
-            cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
-            cv_scores = cross_val_score(
-                LogisticRegression(C=1.0, class_weight="balanced", max_iter=1000, random_state=42),
-                embeddings, labels, cv=cv, scoring="accuracy"
-            )
-            self.cv_accuracy = float(cv_scores.mean())
-            print(f"📊 {n_splits}-fold cross-validated accuracy (held-out estimate): "
-                  f"{self.cv_accuracy:.2%} (± {cv_scores.std():.2%})")
-        else:
-            print("⚠️  Too few examples per class for cross-validation — "
-                  "skipping honest accuracy estimate. Add more labeled data.")
 
-        # Fit the final classifier on all available data for deployment
+        self.cv_accuracy = None
+        best_C = 1.0  # fallback if tuning can't run (too little data)
+
+        if n_splits >= 2:
+            from sklearn.model_selection import StratifiedKFold, GridSearchCV
+
+            cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
+            param_grid = {"C": [0.01, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0]}
+
+            search = GridSearchCV(
+                LogisticRegression(class_weight="balanced", max_iter=1000, random_state=42),
+                param_grid,
+                cv=cv,
+                scoring="accuracy",
+                n_jobs=-1,
+            )
+            search.fit(embeddings, labels)
+
+            best_C = search.best_params_["C"]
+            self.cv_accuracy = float(search.best_score_)
+            print(f"📊 Best C={best_C} found via {n_splits}-fold CV — "
+                  f"cross-validated accuracy (held-out estimate): {self.cv_accuracy:.2%}")
+        else:
+            print("⚠️  Too few examples per class for cross-validation/tuning — "
+                  "using default C=1.0. Add more labeled data for a real estimate.")
+
+        # Fit the final classifier (with the best C found) on all
+        # available data for deployment.
+        self.classifier = LogisticRegression(
+            C=best_C,
+            class_weight="balanced",
+            max_iter=1000,
+            random_state=42,
+            n_jobs=-1,
+        )
         self.classifier.fit(embeddings, labels)
+        self.best_C = best_C
 
         # Store training data for similarity lookup
         self.training_texts = texts

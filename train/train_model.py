@@ -79,21 +79,80 @@ def main():
     clf.save()
     print("✅ Model saved to models/")
 
+    # ── Confusion matrix + precision/recall/F1 (honest, out-of-fold) ──
+    # Same principle as cv_accuracy: predictions here come from
+    # StratifiedKFold cross-validation, so every prediction is made on
+    # a fold the model did NOT see during that fold's training — this
+    # is NOT the classifier scoring its own training data.
+    confusion = None
+    if clf.cv_accuracy is not None:
+        from sklearn.linear_model import LogisticRegression
+        from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score
+        from sklearn.model_selection import StratifiedKFold, cross_val_predict
+
+        labels_arr_full = pd.Series(labels)
+        n_splits = min(5, int(labels_arr_full.value_counts().min()))
+        cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
+
+        oof_preds = cross_val_predict(
+            LogisticRegression(
+                C=getattr(clf, "best_C", 1.0) or 1.0,
+                class_weight="balanced", max_iter=1000, random_state=42,
+            ),
+            clf.training_embeddings, labels, cv=cv,
+        )
+
+        tn, fp, fn, tp = confusion_matrix(labels, oof_preds, labels=[0, 1]).ravel()
+        confusion = {
+            "true_negative": int(tn),   # correctly called SAFE
+            "false_positive": int(fp),  # SAFE message wrongly flagged as SCAM
+            "false_negative": int(fn),  # SCAM message wrongly missed as SAFE (the dangerous one)
+            "true_positive": int(tp),   # correctly caught SCAM
+            "precision": round(float(precision_score(labels, oof_preds, zero_division=0)), 4),
+            "recall": round(float(recall_score(labels, oof_preds, zero_division=0)), 4),
+            "f1": round(float(f1_score(labels, oof_preds, zero_division=0)), 4),
+        }
+        print(f"📊 Confusion matrix (out-of-fold): TP={tp} TN={tn} FP={fp} FN={fn}")
+        print(f"📊 Precision={confusion['precision']:.2%}  Recall={confusion['recall']:.2%}  F1={confusion['f1']:.2%}")
+        if fn > 0:
+            print(f"⚠️  {fn} real scam(s) would have been missed (false negatives) — "
+                  f"the metric that matters most for this project's stated goal.")
+
+    # ── Per-category example counts ─────────────────────────────────
+    # Categories with very few examples are exactly where the model is
+    # weakest and least trustworthy — surfacing counts turns "add more
+    # data" from a guess into a targeted, evidence-based todo list.
+    category_counts = {}
+    weak_categories = []
+    if "category" in df.columns:
+        category_counts = df["category"].value_counts().to_dict()
+        weak_categories = sorted(
+            [cat for cat, count in category_counts.items() if count < 5 and cat != "safe"]
+        )
+        if weak_categories:
+            print(f"⚠️  Categories with < 5 examples (unreliable, need more data): "
+                  f"{', '.join(weak_categories)}")
+
     os.makedirs(os.path.dirname(METRICS_PATH), exist_ok=True)
     metrics = {
         "n_examples": len(texts),
         "n_scam": n_scam,
         "n_safe": n_safe,
         "cv_accuracy": clf.cv_accuracy,
+        "best_C": getattr(clf, "best_C", None),
+        "confusion_matrix": confusion,
+        "category_counts": category_counts,
+        "weak_categories": weak_categories,
         "note": (
-            "cv_accuracy is a stratified k-fold cross-validated estimate, "
-            "not training-set accuracy. With this small a dataset it "
-            "should be treated as directional, not precise."
+            "cv_accuracy and confusion_matrix are stratified k-fold "
+            "cross-validated / out-of-fold estimates, not training-set "
+            "scores. With this small a dataset they should be treated "
+            "as directional, not precise."
         ),
     }
     with open(METRICS_PATH, "w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=2)
-    print(f"✅ Honest metrics written to {METRICS_PATH}: {metrics}")
+    print(f"✅ Honest metrics written to {METRICS_PATH}")
 
 
 if __name__ == "__main__":

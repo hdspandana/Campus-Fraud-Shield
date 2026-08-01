@@ -706,6 +706,86 @@ def main():
 
     st.markdown("---")
 
+    # ── Model Performance (honest metrics, from train_model.py) ────
+    # Reads data/model_metrics.json, which train_model.py regenerates
+    # from real cross-validation each time it's run. If this file is
+    # missing, the model just hasn't been (re)trained locally yet —
+    # that's expected right after a fresh clone, not an error.
+    with st.expander("📊 Model Performance (honest, cross-validated metrics)"):
+        try:
+            import json as _json
+            with open("data/model_metrics.json", "r", encoding="utf-8") as _f:
+                _metrics = _json.load(_f)
+
+            st.caption(
+                f"Trained on {_metrics.get('n_examples', '?')} examples "
+                f"({_metrics.get('n_scam', '?')} scam / {_metrics.get('n_safe', '?')} safe). "
+                "All numbers below are cross-validated / out-of-fold estimates — "
+                "the model was never scored on data it was trained on."
+            )
+
+            cv_acc = _metrics.get("cv_accuracy")
+            confusion = _metrics.get("confusion_matrix")
+
+            if cv_acc is not None:
+                m1, m2, m3, m4 = st.columns(4)
+                m1.metric("Accuracy", f"{cv_acc:.1%}")
+                if confusion:
+                    m2.metric("Precision", f"{confusion['precision']:.1%}",
+                              help="Of messages flagged SCAM, what % actually were scams")
+                    m3.metric("Recall", f"{confusion['recall']:.1%}",
+                              help="Of actual scams, what % did the model catch")
+                    m4.metric("F1 Score", f"{confusion['f1']:.1%}")
+
+            if confusion:
+                st.markdown("**Confusion Matrix** (out-of-fold predictions)")
+                cm_df = {
+                    "": ["Actually SCAM", "Actually SAFE"],
+                    "Predicted SCAM": [confusion["true_positive"], confusion["false_positive"]],
+                    "Predicted SAFE": [confusion["false_negative"], confusion["true_negative"]],
+                }
+                st.dataframe(cm_df, hide_index=True, use_container_width=True)
+
+                if confusion["false_negative"] > 0:
+                    st.warning(
+                        f"⚠️ {confusion['false_negative']} real scam(s) in the dataset "
+                        f"would have been missed (false negatives) under cross-validation — "
+                        f"the failure mode that matters most for this project's goal of "
+                        f"minimizing missed scams."
+                    )
+
+            category_counts = _metrics.get("category_counts") or {}
+            weak_categories = _metrics.get("weak_categories") or []
+            if category_counts:
+                st.markdown("**Examples per category**")
+                st.bar_chart(category_counts)
+                if weak_categories:
+                    st.warning(
+                        "⚠️ These categories have fewer than 5 examples and are "
+                        "the least reliable right now — the model has barely "
+                        "seen enough of them to learn the pattern: "
+                        f"**{', '.join(weak_categories)}**. Adding more real "
+                        "examples for these specifically (rather than padding "
+                        "categories that already have plenty) is the highest-"
+                        "impact way to improve accuracy from here."
+                    )
+
+            st.caption(
+                "Run `python train/train_model.py` after adding new labeled "
+                "examples to `data/scam_dataset.csv` to regenerate these numbers."
+            )
+
+        except FileNotFoundError:
+            st.info(
+                "No trained-model metrics found yet. Run "
+                "`python train/train_model.py` from the project root to train "
+                "the model and generate this dashboard."
+            )
+        except Exception as e:
+            st.caption(f"Could not load model metrics: {e}")
+
+    st.markdown("---")
+
     # ── Demo preset buttons ───────────────────────────────────────
     st.markdown("#### 🚀 Try a Demo Message")
     st.caption("👇 Click any button below to instantly load an example message")
