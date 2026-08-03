@@ -14,6 +14,7 @@
 #   • Judge-Friendly Formula Output
 # ═════════════════════════════════════════════════════════════════
 
+import itertools
 import os
 import re
 import sys
@@ -144,17 +145,48 @@ class FraudScorer:
             domain_score=domain_score,
             violations=campus_result.get("violations", []),
             domain_reasons=domain_result.get("reasons", []),
+            history_matches=history_matches,
         )
 
         # ────────────────────────────────────────────────────────
         # Conflicted Signal Detection
         # ────────────────────────────────────────────────────────
-        conflict_detected = abs(rules_score - ml_score) > 45
+        # Was previously only comparing rules_score vs ml_score, which
+        # meant a domain-vs-history disagreement (e.g. one engine at
+        # ~0, another at ~90+) could go completely undetected. Now
+        # checks every pair among all 4 signals that feed the weighted
+        # formula, so any two engines strongly disagreeing gets caught
+        # regardless of which two they are.
+        engine_scores = {
+            "rules":   combined_rules_score,
+            "domain":  domain_score,
+            "ml":      ml_score,
+            "history": history_score,
+        }
+        CONFLICT_THRESHOLD = 45
+        conflicting_pairs = [
+            (a, b) for a, b in itertools.combinations(engine_scores, 2)
+            if abs(engine_scores[a] - engine_scores[b]) > CONFLICT_THRESHOLD
+        ]
+        conflict_detected = bool(conflicting_pairs)
 
         # ────────────────────────────────────────────────────────
         # Label
         # ────────────────────────────────────────────────────────
         label = self._get_label(final_score)
+
+        # A genuinely conflicted verdict (engines strongly disagree)
+        # must never silently resolve to SAFE — the project's stated
+        # goal is minimizing false negatives even at some cost to
+        # false positives, so "ambiguous" should escalate toward
+        # caution, not default to the safe-looking numeric average.
+        # This was a real gap: previously a conflicted case could
+        # still land on SAFE with only a footnote most users would
+        # never read.
+        label_escalated = False
+        if conflict_detected and label == LABEL_SAFE:
+            label = LABEL_SUSPICIOUS
+            label_escalated = True
 
         # ────────────────────────────────────────────────────────
         # Category
@@ -240,13 +272,32 @@ class FraudScorer:
             "formula": formula,
             "override_applied": override_applied,
             "conflict_detected": conflict_detected,
-            "conflict_message": (
-                "Conflicted Signal Detected — Manual verification recommended."
-                if conflict_detected else ""
+            "conflict_message": self._build_conflict_message(
+                conflicting_pairs, engine_scores, label_escalated
             ),
             "entities_found": campus_result.get("entities_found", []),
             "extractions": rules_result.get("extractions", {}),
         }
+
+    def _build_conflict_message(
+        self, conflicting_pairs, engine_scores, label_escalated: bool
+    ) -> str:
+        if not conflicting_pairs:
+            return ""
+
+        pair_strs = [
+            f"{a} ({engine_scores[a]:.0f}) vs {b} ({engine_scores[b]:.0f})"
+            for a, b in conflicting_pairs
+        ]
+        msg = "Conflicted Signal Detected — " + "; ".join(pair_strs) + "."
+        if label_escalated:
+            msg += (
+                " Verdict escalated from SAFE to SUSPICIOUS due to this "
+                "conflict — manual verification recommended."
+            )
+        else:
+            msg += " Manual verification recommended."
+        return msg
 
     # ────────────────────────────────────────────────────────────
     # Override Logic
@@ -259,8 +310,37 @@ class FraudScorer:
         domain_score: float,
         violations: List[str],
         domain_reasons: List[str] = None,
+        history_matches: List[Dict[str, Any]] = None,
     ):
         domain_reasons = domain_reasons or []
+        history_matches = history_matches or []
+
+        # ── Near-identical match to a previously reported scam ──────
+        # A FAISS similarity this high against a message someone else
+        # already reported as a scam is a very strong signal — the
+        # same category of problem the threat-intel overrides above
+        # solve, just for the history engine. Only fires for matches
+        # LABELED as scams (label == 1); a high-similarity match to a
+        # known-SAFE message does not force a safe verdict, to keep
+        # the project's false-negative-averse philosophy — we escalate
+        # readily but never suppress based on a "looks like a safe
+        # message" match alone.
+        HISTORY_SIMILARITY_THRESHOLD = 0.90
+        if history_matches:
+            best_scam_match = max(
+                (m for m in history_matches if m.get("label") == 1),
+                key=lambda m: m.get("similarity", 0),
+                default=None,
+            )
+            if best_scam_match and best_scam_match.get("similarity", 0) >= HISTORY_SIMILARITY_THRESHOLD:
+                similarity_pct = best_scam_match["similarity"] * 100
+                category = best_scam_match.get("category", "scam")
+                times_reported = best_scam_match.get("times_reported", 1)
+                return max(weighted_score, 80.0), (
+                    f"Near-identical ({similarity_pct:.0f}%) match to a "
+                    f"previously reported {category} scam "
+                    f"(reported {times_reported}x)"
+                )
 
         # ── Real-time threat-intel hit (VirusTotal / Safe Browsing) ──
         # A confirmed hit from these is a near-zero-false-positive
