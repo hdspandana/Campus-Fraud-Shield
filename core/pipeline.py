@@ -76,6 +76,23 @@ def load_ml_model():
                 labels = df["label"].astype(int).tolist()
                 clf.fit(texts, labels)
                 clf.save()  # persist so next process start loads instantly
+
+                # Also write data/model_metrics.json here — this is the
+                # ONLY training path that runs automatically on a fresh
+                # deploy (e.g. Streamlit Cloud, where nobody manually
+                # runs train_model.py). Without this, the "Model
+                # Performance" dashboard would say "no metrics found"
+                # forever on any environment that only ever ran app.py.
+                try:
+                    from core.ml_model import write_model_metrics
+                    write_model_metrics(clf, df, "data/model_metrics.json")
+                except Exception:
+                    logger.warning(
+                        "Auto-training succeeded but writing "
+                        "model_metrics.json failed — the Model "
+                        "Performance dashboard may be unavailable.",
+                        exc_info=True,
+                    )
             except FileNotFoundError:
                 raise RuntimeError(
                     "data/scam_dataset.csv not found — cannot train "
