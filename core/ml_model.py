@@ -105,7 +105,12 @@ class SemanticScamClassifier:
                 param_grid,
                 cv=cv,
                 scoring="accuracy",
-                n_jobs=-1,
+                n_jobs=1,  # NOT -1: parallel workers each duplicate memory,
+                           # which silently kills the process on memory-
+                           # constrained hosts (e.g. Streamlit Cloud's free
+                           # tier — 66 examples is tiny, so single-process
+                           # search is still fast; this isn't a speed vs
+                           # accuracy tradeoff, just avoiding OOM kills.
             )
             search.fit(embeddings, labels)
 
@@ -124,7 +129,6 @@ class SemanticScamClassifier:
             class_weight="balanced",
             max_iter=1000,
             random_state=42,
-            n_jobs=-1,
         )
         self.classifier.fit(embeddings, labels)
         self.best_C = best_C
