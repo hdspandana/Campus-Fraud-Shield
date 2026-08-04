@@ -3,10 +3,6 @@ from dotenv import load_dotenv
 import google.genai as genai
 
 load_dotenv()
-print("=" * 40)
-print("CWD:", os.getcwd())
-print("API KEY:", os.getenv("GEMINI_API_KEY"))
-print("=" * 40)
 
 def get_llm_explanation(user_message: str, score: float, reasons: list, category: str) -> str:
     try:
