@@ -76,29 +76,37 @@ def load_ml_model():
                 labels = df["label"].astype(int).tolist()
                 clf.fit(texts, labels)
                 clf.save()  # persist so next process start loads instantly
-
-                # Also write data/model_metrics.json here — this is the
-                # ONLY training path that runs automatically on a fresh
-                # deploy (e.g. Streamlit Cloud, where nobody manually
-                # runs train_model.py). Without this, the "Model
-                # Performance" dashboard would say "no metrics found"
-                # forever on any environment that only ever ran app.py.
-                try:
-                    from core.ml_model import write_model_metrics
-                    write_model_metrics(clf, df, "data/model_metrics.json")
-                except Exception:
-                    logger.warning(
-                        "Auto-training succeeded but writing "
-                        "model_metrics.json failed — the Model "
-                        "Performance dashboard may be unavailable.",
-                        exc_info=True,
-                    )
             except FileNotFoundError:
                 raise RuntimeError(
                     "data/scam_dataset.csv not found — cannot train "
                     "the classifier. Run train_model.py or ensure the "
                     "dataset file is present."
                 )
+
+    # Regardless of whether the model above was just freshly trained
+    # OR loaded from an existing saved file (e.g. left over from an
+    # earlier deploy/reboot on a host that keeps its disk between
+    # restarts) — make sure data/model_metrics.json exists. This is
+    # deliberately decoupled from "did we just train" above: relying
+    # on that alone meant a pre-existing saved model (from before this
+    # fix existed, or from a container that wasn't fully wiped on
+    # reboot) would silently skip metrics generation forever, which is
+    # exactly the bug that caused the dashboard to say "no metrics
+    # found" even after the model itself worked fine.
+    metrics_path = "data/model_metrics.json"
+    if clf.is_trained and not os.path.exists(metrics_path):
+        try:
+            import pandas as pd
+            from core.ml_model import write_model_metrics
+            df = pd.read_csv("data/scam_dataset.csv")
+            write_model_metrics(clf, df, metrics_path)
+            logger.info("Generated missing %s from the currently loaded model.", metrics_path)
+        except Exception:
+            logger.warning(
+                "Could not generate %s — the Model Performance "
+                "dashboard may be unavailable.", metrics_path, exc_info=True,
+            )
+
     return clf
 
 

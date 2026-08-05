@@ -247,7 +247,9 @@ class SemanticScamClassifier:
         with open(TEXTS_PATH, "w", encoding="utf-8") as f:
             json.dump({
                 "texts": self.training_texts,
-                "labels": self.training_labels
+                "labels": self.training_labels,
+                "cv_accuracy": self.cv_accuracy,
+                "best_C": self.best_C,
             }, f, ensure_ascii=False, indent=2)
 
         print(f"✅ Model saved to {MODELS_DIR}/")
@@ -275,6 +277,11 @@ class SemanticScamClassifier:
                 data = json.load(f)
                 self.training_texts = data["texts"]
                 self.training_labels = data["labels"]
+                # .get(...) with a default, so loading a model saved
+                # before this field existed doesn't crash — it just
+                # comes back as None (same as a fresh, untrained state)
+                self.cv_accuracy = data.get("cv_accuracy")
+                self.best_C = data.get("best_C")
 
             self.is_trained = True
             print(f"✅ Model loaded from {MODELS_DIR}/")
@@ -344,7 +351,7 @@ def write_model_metrics(clf: "SemanticScamClassifier", df, metrics_path: str = "
     n_safe = len(labels) - n_scam
 
     confusion = None
-    if clf.cv_accuracy is not None:
+    if clf.training_embeddings is not None and len(labels) >= 4:
         from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score
         from sklearn.model_selection import StratifiedKFold, cross_val_predict
         import pandas as pd
