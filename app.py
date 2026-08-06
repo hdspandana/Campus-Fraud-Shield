@@ -31,7 +31,24 @@ from core.pipeline import (
     IMPORT_ERRORS,
     run_full_pipeline,
     get_action_safe,
+    load_ml_model,
 )
+
+# ── Ensure the model (and metrics.json) exist BEFORE the dashboard
+# section below tries to read them, not only after someone scans ──
+# The bug this fixes: model loading/training previously only happened
+# inside the scan button's click handler. On a fresh process (a new
+# deploy, or after a real reboot with no scan history yet), the
+# "Model Performance" section renders before anyone has scanned
+# anything — so the metrics file genuinely doesn't exist yet. This
+# runs once per process (load_ml_model is lru_cache'd in
+# core/pipeline.py), so it costs nothing on subsequent page loads or
+# the first real scan — it just moves WHEN the one-time cost happens.
+if not SIMULATION_MODE:
+    try:
+        load_ml_model()
+    except Exception:
+        pass  # dashboard will show "no metrics found" as a safe fallback
 
 # ── UI-only extras: not needed by the API, so they stay local here ──
 try:
