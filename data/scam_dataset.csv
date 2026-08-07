@@ -1,67 +1,87 @@
-"text","label","category","source"
-"Congratulations! You have been selected for internship at Internshala partner company. Pay Rs.1500 registration fee on Paytm 9876543210 to confirm your slot.","1","internship_fee","dataset"
-"Pay Rs.999 joining fee to confirm your work from home internship. Send to PhonePe 8765432109.","1","internship_fee","dataset"
-"internsha1a.com internship offer selected pay Rs.1500 registration fee","1","internship_fee","dataset"
-"g00gle.com selected you for internship pay Rs.999 fee to confirm your slot immediately","1","internship_fee","dataset"
-"You have WON Rs.25 lakh in KBC Lucky Draw! Pay Rs.1500 processing fee to claim prize.","1","lottery_prize","dataset"
-"amazon-winner.xyz you won iPhone pay Rs.299 delivery charge to claim","1","lottery_prize","dataset"
-"http://amazon-lucky-winner.xyz/claim you won iPhone pay Rs.299","1","lottery_prize","dataset"
-"Share your OTP to claim KBC prize of Rs.25 lakh. Contact kbc.prize@gmail.com urgently.","1","otp_fraud","dataset"
-"SBI account will be blocked. Verify KYC by sharing OTP sent to your number.","1","otp_fraud","dataset"
-"gooogle.com free recharge enter OTP to claim Rs.199 cashback today only","1","otp_fraud","dataset"
-"sbi-kyc-update.xyz urgent KYC required login and share OTP with executive","1","otp_fraud","dataset"
-"http://sbi-kyc-verify.xyz/login urgent KYC update required enter OTP","1","otp_fraud","dataset"
-"facebo0k.com account security alert share OTP to recover access","1","otp_fraud","dataset"
-"NSP Scholarship of Rs.25000 approved. Pay Rs.500 processing fee to PhonePe 8765432109.","1","scholarship_fee","dataset"
-"Your scholarship of Rs.40000 is pending release. Pay Rs.750 verification fee to activate NSP account today.","1","scholarship_fee","dataset"
-"http://university-portal-login.xyz/auth pay admission fee now","1","bank_impersonation","dataset"
-"university-portal-login.xyz complete admission formalities pay Rs.5000 fee","1","bank_impersonation","dataset"
-"college-admission-portal.xyz your admission confirmed pay Rs.3000 processing fee","1","bank_impersonation","dataset"
-"g0ogle.com job offer pay Rs.2000 training fee before joining date expires tonight","1","job_fee","dataset"
-"google-jobs-india.xyz apply now pay Rs.1500 registration fee","1","job_fee","dataset"
-"Your parcel is held at customs. Pay Rs.49 clearance fee within 2 hours at delivery-clearance-track.xyz or it will be returned.","1","delivery_scam","dataset"
-"Bluedart: Your package could not be delivered due to incomplete address. Update details and pay Rs.20 redelivery fee at bluedart-redeliver.info","1","delivery_scam","dataset"
-"Your Amazon package is on hold. Click to pay pending customs duty of Rs.150 to release shipment.","1","delivery_scam","dataset"
-"Delhivery: parcel returned to warehouse, pay Rs.35 re-shipping charge via UPI link to receive again.","1","delivery_scam","dataset"
-"Scan this QR code to receive your cashback of Rs.500 from your recent purchase. Offer valid for 1 hour only.","1","qr_scam","dataset"
-"Scan QR to claim your college fest prize money. Enter your UPI PIN after scanning to confirm receipt.","1","qr_scam","dataset"
-"Congratulations you won a raffle prize. Scan the attached QR code and enter UPI PIN to collect Rs.2000.","1","qr_scam","dataset"
-"Hi, sent you Rs.500 by mistake via UPI, please approve the collect request I've sent to refund it.","1","upi_request","dataset"
-"I am your senior from college, urgently need Rs.3000, please accept my UPI payment request I just sent, will return tomorrow.","1","upi_request","dataset"
-"Your electricity bill payment failed. Approve the UPI autopay request sent to your number immediately to avoid disconnection.","1","upi_request","dataset"
-"Your computer has been infected with a virus. Call Microsoft support at this number immediately and allow remote access to fix it.","1","tech_support","dataset"
-"Warning: Your device is compromised. Download AnyDesk and share the code with our technician to remove the malware right now.","1","tech_support","dataset"
-"Your antivirus subscription has expired and your bank details are exposed. Call now to renew and secure your account.","1","tech_support","dataset"
-"We have recorded video from your device camera. Pay Rs.20000 in cryptocurrency within 24 hours or we send it to your entire contact list.","1","sextortion","dataset"
-"Your account was accessed and private files were copied. Transfer payment to the given wallet address or everything gets leaked to your college.","1","sextortion","dataset"
-"Join our Telegram channel for a part-time task job paying Rs.1500/day. Pay Rs.500 registration deposit to start receiving tasks.","1","telegram_job","dataset"
-"Discord DM: Selected for a paid data-entry gig, Rs.300 refundable security deposit required before onboarding link is shared.","1","discord_scam","dataset"
-"Telegram bot: Complete simple YouTube like tasks, earn Rs.200 per task, pay Rs.999 one-time activation fee to unlock task list.","1","telegram_job","dataset"
-"Double your money in 7 days guaranteed! Join our stock trading group and invest minimum Rs.5000 through this link.","1","invest_scam","dataset"
-"Crypto expert here, invested students are earning 40% weekly returns, DM to join with a starting deposit of Rs.2000.","1","invest_scam","dataset"
-"Your college email storage is full. Login at student-portal-msramaiah.xyz with your credentials to avoid account suspension.","1","credential_harvesting","dataset"
-"IT department: Verify your student login at the link below within 24 hours or your exam hall ticket access will be revoked.","1","credential_harvesting","dataset"
-"Your TCS interview is scheduled at nextstep.tcs.com on Monday 10AM. No fee required.","0","safe","dataset"
-"Internshala confirmed your internship application. Login at internshala.com to proceed.","0","safe","dataset"
-"SBI bank: We will NEVER ask for your OTP. Report fraud at 1930 or visit sbi.co.in","0","safe","dataset"
-"Check scholarships.gov.in for NSP status.","0","safe","dataset"
-"Your Amazon order has been confirmed. Track at amazon.in. No additional charges.","0","safe","dataset"
-"Google Meet interview link sent to your email. Join at meet.google.com. No fees.","0","safe","dataset"
-"HDFC bank reminder: Never share OTP. Call 1800-202-6161 for support.","0","safe","dataset"
-"Your Infosys offer letter sent to registered email. Joining date 15th March. No charges.","0","safe","dataset"
-"NPTEL certificate exam fee Rs.1000 payable only at swayam.gov.in.","0","safe","dataset"
-"Your Bluedart parcel is out for delivery today between 2-6 PM. Track at bluedart.com.","0","safe","dataset"
-"Delhivery: Your order has been delivered successfully. Rate your experience on the app.","0","safe","dataset"
-"Reminder: Your electricity bill of Rs.1200 is due on 15th. Pay via official BESCOM app or bescom.karnataka.gov.in.","0","safe","dataset"
-"Your laptop warranty claim has been registered. A technician will visit on the scheduled date, no advance payment needed.","0","safe","dataset"
-"Your college placement cell has shared a verified job posting for Infosys, apply directly at the company careers page.","0","safe","dataset"
-"MSRIT exam hall ticket is now available on the student portal, login with your official college credentials.","0","safe","dataset"
-"Reminder from your professor: Assignment 3 submission deadline extended to Friday, submit via Google Classroom.","0","safe","dataset"
-"Your mutual fund SIP of Rs.2000 was debited successfully today, view details on the Groww app.","0","safe","dataset"
-"Zerodha: Your KYC has been verified successfully, no further action needed.","0","safe","dataset"
-"Your friend sent you Rs.500 via Google Pay. Transaction ID and confirmation available in app history.","0","safe","dataset"
-"Class representative here: tomorrow's OS lab is shifted to 10AM, no fee or link involved, just a room change.","0","safe","dataset"
-"Placement office notice: pre-placement talk by Cisco on Thursday, register via the official college form, free of cost.","0","safe","dataset"
-"Your Swiggy order has been delivered. Rate your delivery partner on the app.","0","safe","dataset"
-"RBI advisory: Banks never ask for OTP or PIN over call or SMS. Stay alert against fraud calls.","0","safe","dataset"
-"Your hostel mess fee payment of Rs.6000 was received, receipt available on the college ERP portal.","0","safe","dataset"
+text,label,category,source
+Congratulations! You have been selected for internship at Internshala partner company. Pay Rs.1500 registration fee on Paytm 9876543210 to confirm your slot.,1,internship_fee,unknown_provenance
+Pay Rs.999 joining fee to confirm your work from home internship. Send to PhonePe 8765432109.,1,internship_fee,unknown_provenance
+internsha1a.com internship offer selected pay Rs.1500 registration fee,1,internship_fee,unknown_provenance
+g00gle.com selected you for internship pay Rs.999 fee to confirm your slot immediately,1,internship_fee,unknown_provenance
+You have WON Rs.25 lakh in KBC Lucky Draw! Pay Rs.1500 processing fee to claim prize.,1,lottery_prize,unknown_provenance
+amazon-winner.xyz you won iPhone pay Rs.299 delivery charge to claim,1,lottery_prize,unknown_provenance
+http://amazon-lucky-winner.xyz/claim you won iPhone pay Rs.299,1,lottery_prize,unknown_provenance
+Share your OTP to claim KBC prize of Rs.25 lakh. Contact kbc.prize@gmail.com urgently.,1,otp_fraud,unknown_provenance
+SBI account will be blocked. Verify KYC by sharing OTP sent to your number.,1,otp_fraud,unknown_provenance
+gooogle.com free recharge enter OTP to claim Rs.199 cashback today only,1,otp_fraud,unknown_provenance
+sbi-kyc-update.xyz urgent KYC required login and share OTP with executive,1,otp_fraud,unknown_provenance
+http://sbi-kyc-verify.xyz/login urgent KYC update required enter OTP,1,otp_fraud,unknown_provenance
+facebo0k.com account security alert share OTP to recover access,1,otp_fraud,unknown_provenance
+NSP Scholarship of Rs.25000 approved. Pay Rs.500 processing fee to PhonePe 8765432109.,1,scholarship_fee,unknown_provenance
+Your scholarship of Rs.40000 is pending release. Pay Rs.750 verification fee to activate NSP account today.,1,scholarship_fee,unknown_provenance
+http://university-portal-login.xyz/auth pay admission fee now,1,bank_impersonation,unknown_provenance
+university-portal-login.xyz complete admission formalities pay Rs.5000 fee,1,bank_impersonation,unknown_provenance
+college-admission-portal.xyz your admission confirmed pay Rs.3000 processing fee,1,bank_impersonation,unknown_provenance
+g0ogle.com job offer pay Rs.2000 training fee before joining date expires tonight,1,job_fee,unknown_provenance
+google-jobs-india.xyz apply now pay Rs.1500 registration fee,1,job_fee,unknown_provenance
+Your parcel is held at customs. Pay Rs.49 clearance fee within 2 hours at delivery-clearance-track.xyz or it will be returned.,1,delivery_scam,unknown_provenance
+Bluedart: Your package could not be delivered due to incomplete address. Update details and pay Rs.20 redelivery fee at bluedart-redeliver.info,1,delivery_scam,unknown_provenance
+Your Amazon package is on hold. Click to pay pending customs duty of Rs.150 to release shipment.,1,delivery_scam,unknown_provenance
+"Delhivery: parcel returned to warehouse, pay Rs.35 re-shipping charge via UPI link to receive again.",1,delivery_scam,unknown_provenance
+Scan this QR code to receive your cashback of Rs.500 from your recent purchase. Offer valid for 1 hour only.,1,qr_scam,unknown_provenance
+Scan QR to claim your college fest prize money. Enter your UPI PIN after scanning to confirm receipt.,1,qr_scam,unknown_provenance
+Congratulations you won a raffle prize. Scan the attached QR code and enter UPI PIN to collect Rs.2000.,1,qr_scam,unknown_provenance
+"Hi, sent you Rs.500 by mistake via UPI, please approve the collect request I've sent to refund it.",1,upi_request,unknown_provenance
+"I am your senior from college, urgently need Rs.3000, please accept my UPI payment request I just sent, will return tomorrow.",1,upi_request,unknown_provenance
+Your electricity bill payment failed. Approve the UPI autopay request sent to your number immediately to avoid disconnection.,1,upi_request,unknown_provenance
+Your computer has been infected with a virus. Call Microsoft support at this number immediately and allow remote access to fix it.,1,tech_support,unknown_provenance
+Warning: Your device is compromised. Download AnyDesk and share the code with our technician to remove the malware right now.,1,tech_support,unknown_provenance
+Your antivirus subscription has expired and your bank details are exposed. Call now to renew and secure your account.,1,tech_support,unknown_provenance
+We have recorded video from your device camera. Pay Rs.20000 in cryptocurrency within 24 hours or we send it to your entire contact list.,1,sextortion,unknown_provenance
+Your account was accessed and private files were copied. Transfer payment to the given wallet address or everything gets leaked to your college.,1,sextortion,unknown_provenance
+Join our Telegram channel for a part-time task job paying Rs.1500/day. Pay Rs.500 registration deposit to start receiving tasks.,1,telegram_job,unknown_provenance
+"Discord DM: Selected for a paid data-entry gig, Rs.300 refundable security deposit required before onboarding link is shared.",1,discord_scam,unknown_provenance
+"Telegram bot: Complete simple YouTube like tasks, earn Rs.200 per task, pay Rs.999 one-time activation fee to unlock task list.",1,telegram_job,unknown_provenance
+Double your money in 7 days guaranteed! Join our stock trading group and invest minimum Rs.5000 through this link.,1,invest_scam,unknown_provenance
+"Crypto expert here, invested students are earning 40% weekly returns, DM to join with a starting deposit of Rs.2000.",1,invest_scam,unknown_provenance
+Your college email storage is full. Login at student-portal-msramaiah.xyz with your credentials to avoid account suspension.,1,credential_harvesting,unknown_provenance
+IT department: Verify your student login at the link below within 24 hours or your exam hall ticket access will be revoked.,1,credential_harvesting,unknown_provenance
+Your TCS interview is scheduled at nextstep.tcs.com on Monday 10AM. No fee required.,0,safe,unknown_provenance
+Internshala confirmed your internship application. Login at internshala.com to proceed.,0,safe,unknown_provenance
+SBI bank: We will NEVER ask for your OTP. Report fraud at 1930 or visit sbi.co.in,0,safe,unknown_provenance
+Check scholarships.gov.in for NSP status.,0,safe,unknown_provenance
+Your Amazon order has been confirmed. Track at amazon.in. No additional charges.,0,safe,unknown_provenance
+Google Meet interview link sent to your email. Join at meet.google.com. No fees.,0,safe,unknown_provenance
+HDFC bank reminder: Never share OTP. Call 1800-202-6161 for support.,0,safe,unknown_provenance
+Your Infosys offer letter sent to registered email. Joining date 15th March. No charges.,0,safe,unknown_provenance
+NPTEL certificate exam fee Rs.1000 payable only at swayam.gov.in.,0,safe,unknown_provenance
+Your Bluedart parcel is out for delivery today between 2-6 PM. Track at bluedart.com.,0,safe,unknown_provenance
+Delhivery: Your order has been delivered successfully. Rate your experience on the app.,0,safe,unknown_provenance
+Reminder: Your electricity bill of Rs.1200 is due on 15th. Pay via official BESCOM app or bescom.karnataka.gov.in.,0,safe,unknown_provenance
+"Your laptop warranty claim has been registered. A technician will visit on the scheduled date, no advance payment needed.",0,safe,unknown_provenance
+"Your college placement cell has shared a verified job posting for Infosys, apply directly at the company careers page.",0,safe,unknown_provenance
+"MSRIT exam hall ticket is now available on the student portal, login with your official college credentials.",0,safe,unknown_provenance
+"Reminder from your professor: Assignment 3 submission deadline extended to Friday, submit via Google Classroom.",0,safe,unknown_provenance
+"Your mutual fund SIP of Rs.2000 was debited successfully today, view details on the Groww app.",0,safe,unknown_provenance
+"Zerodha: Your KYC has been verified successfully, no further action needed.",0,safe,unknown_provenance
+Your friend sent you Rs.500 via Google Pay. Transaction ID and confirmation available in app history.,0,safe,unknown_provenance
+"Class representative here: tomorrow's OS lab is shifted to 10AM, no fee or link involved, just a room change.",0,safe,unknown_provenance
+"Placement office notice: pre-placement talk by Cisco on Thursday, register via the official college form, free of cost.",0,safe,unknown_provenance
+Your Swiggy order has been delivered. Rate your delivery partner on the app.,0,safe,unknown_provenance
+RBI advisory: Banks never ask for OTP or PIN over call or SMS. Stay alert against fraud calls.,0,safe,unknown_provenance
+"Your hostel mess fee payment of Rs.6000 was received, receipt available on the college ERP portal.",0,safe,unknown_provenance
+Congratulations! You have been selected for the Summer Analyst internship at Deloitte. Please complete your onboarding form at careers.deloitte.com/onboarding by Friday.,0,safe,self_written_hard_negative
+Your scholarship application under the Post-Matric SC/ST scheme has been shortlisted. Submit your income certificate and Aadhaar copy at the college office before the 20th.,0,safe,self_written_hard_negative
+Reminder: Your semester examination fee of Rs.3200 must be paid through the college ERP portal before Friday to avoid a late fee.,0,safe,self_written_hard_negative
+Your application has been shortlisted for the next round. Please complete the onboarding form and submit your documents within 48 hours.,0,safe,self_written_hard_negative
+NSP Scholarship disbursement for verified applicants will be processed this week. Check your status by logging into the official NSP portal with your registered credentials.,0,safe,self_written_hard_negative
+You have been selected for the campus placement drive with Wipro. Kindly confirm your slot by replying to this email before 6 PM today.,0,safe,self_written_hard_negative
+Your hostel fee payment of Rs.45000 is due. Pay via the college fee portal using your student ID before the semester deadline.,0,safe,self_written_hard_negative
+Placement cell notice: Students shortlisted for the TCS Digital drive must report to the seminar hall at 9 AM with their ID cards and resumes.,0,safe,self_written_hard_negative
+Your internship offer from the college placement portal has been confirmed. Please sign the offer letter and upload it before joining.,0,safe,self_written_hard_negative
+Fee payment confirmation: Your registration for the technical symposium has been received. Show this message at the entry desk.,0,safe,self_written_hard_negative
+We have received your investment inquiry. A licensed advisor will contact you within 3 business days through our verified SEBI-registered helpline to discuss mutual fund options.,1,invest_scam,self_written_representative
+Double your investment in 7 days guaranteed! Join our exclusive trading group and deposit Rs.5000 to start earning daily profits.,1,invest_scam,self_written_representative
+"Crypto experts reveal secret method to turn Rs.10000 into Rs.1 lakh in one month. DM now for the strategy, limited seats.",1,invest_scam,self_written_representative
+Congrats! You're selected for a part-time Telegram job. Just forward messages and earn Rs.500 per task. Join the group and pay Rs.199 registration to start.,1,telegram_job,self_written_representative
+"Work from home data entry job on Telegram. No experience needed, earn Rs.3000/day. Contact our HR bot and complete the Rs.99 verification fee.",1,telegram_job,self_written_representative
+Your UPI account will be blocked in 2 hours. Share your UPI PIN with our support agent immediately to prevent suspension.,1,upi_request,self_written_representative
+Refund of Rs.2499 initiated to your UPI ID. Enter your UPI PIN on the link below to receive the amount instantly.,1,upi_request,self_written_representative
+IT security alert: your college portal password has expired. Click here and re-enter your username and password to avoid account lockout.,1,credential_harvesting,self_written_representative
+Your email storage is full. Verify your identity by logging in with your college email and password at this link to restore access.,1,credential_harvesting,self_written_representative
+"We are hiring for a data entry job, Rs.15000/month. Pay Rs.500 registration fee via UPI to receive your offer letter and login credentials.",1,job_fee,self_written_representative
