@@ -48,9 +48,14 @@ RULES_OUTPUT = {
 # ── Domain Checker Output ────────────────────────────────
 # Returned by: core/domain_checker.py → analyze()
 DOMAIN_OUTPUT = {
-    "score":   0.0,  # float 0-100
-    "reasons": [],   # list of strings
-    "domains": []    # list of domains found in text
+    "score":     0.0,  # float 0-100
+    "reasons":   [],   # list of strings
+    "domains":   [],   # list of domains found in text
+    "ti_status": ""    # "not_configured" | "checked" | "unavailable"
+    # ti_status distinguishes "no threat-intel signal because keys
+    # aren't configured", "checked and found nothing", and "checked
+    # but the API call itself failed" — these are NOT the same thing
+    # and must never be collapsed into a single implicit "safe".
     # reason item: plain English string
 }
 
@@ -68,7 +73,10 @@ CAMPUS_OUTPUT = {
 # ── Final Scorer Output ──────────────────────────────────
 # Returned by: core/scorer.py → calculate()
 SCORER_OUTPUT = {
-    "final_score": 0.0,    # float 0-100
+    "final_score": 0.0,    # float 0-100 — HOW DANGEROUS this looks
+    "confidence":  1.0,    # float 0-1   — HOW SURE we are of that number
+    "confidence_label": "",  # "HIGH" | "MEDIUM" | "LOW"
+    "confidence_reasons": [],  # why confidence was reduced, if it was
     "label":       "",     # SCAM / SUSPICIOUS / SAFE
     "category":    "",     # scam subcategory
     "breakdown": {

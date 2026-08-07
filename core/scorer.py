@@ -171,6 +171,49 @@ class FraudScorer:
         conflict_detected = bool(conflicting_pairs)
 
         # ────────────────────────────────────────────────────────
+        # Confidence (separate axis from risk — how sure are we,
+        # not how dangerous does this look)
+        # ────────────────────────────────────────────────────────
+        # This did not exist before: a failed threat-intel lookup and a
+        # verified-clean lookup both silently produced score=0, and there
+        # was nowhere in the pipeline to record that a check was actually
+        # attempted-and-failed vs actually-succeeded. domain_checker.py's
+        # ti_status now carries that distinction; this is where it's
+        # turned into something the UI/judge can see.
+        confidence = 1.0
+        confidence_reasons = []
+
+        ti_status = domain_result.get("ti_status", "not_configured")
+        if ti_status == "unavailable":
+            confidence -= 0.25
+            confidence_reasons.append(
+                "Threat-intelligence lookup (VirusTotal/Safe Browsing) "
+                "was attempted but failed — this verdict relies more "
+                "heavily on rules, semantic, and history signals alone."
+            )
+        elif ti_status == "not_configured":
+            confidence -= 0.10
+            confidence_reasons.append(
+                "Threat-intelligence lookup is not configured for this "
+                "deployment — verdict does not include live reputation "
+                "data from VirusTotal/Safe Browsing."
+            )
+
+        if conflict_detected:
+            confidence -= 0.20
+            confidence_reasons.append(
+                "Detection engines disagreed significantly with each "
+                "other on this message."
+            )
+
+        confidence = max(0.3, min(1.0, confidence))
+        confidence_label = (
+            "HIGH" if confidence >= 0.85 else
+            "MEDIUM" if confidence >= 0.6 else
+            "LOW"
+        )
+
+        # ────────────────────────────────────────────────────────
         # Label
         # ────────────────────────────────────────────────────────
         label = self._get_label(final_score)
@@ -261,6 +304,9 @@ class FraudScorer:
 
         return {
             "final_score": round(final_score, 1),
+            "confidence": round(confidence, 2),
+            "confidence_label": confidence_label,
+            "confidence_reasons": confidence_reasons,
             "label": label,
             "category": category,
             "category_display": CATEGORY_DISPLAY.get(

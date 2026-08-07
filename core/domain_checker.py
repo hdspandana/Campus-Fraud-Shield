@@ -337,11 +337,18 @@ class DomainChecker:
         # ── 10. Real-time threat intelligence (VirusTotal / Safe Browsing) ──
         # Only fires if API keys are configured; silently skipped otherwise
         # so this never breaks the app for anyone without keys set up.
-        ti_score, ti_reasons = self._check_threat_intel(domains, urls)
+        ti_score, ti_reasons, ti_status = self._check_threat_intel(domains, urls)
         score   += ti_score
         reasons.extend(ti_reasons)
         if ti_score > 0:
             red_flags += 1
+
+        if ti_status == self.TI_UNAVAILABLE:
+            reasons.append(
+                "⚪ Threat-intelligence lookup was attempted but did not "
+                "complete (network/rate-limit issue) — this does NOT mean "
+                "the domain is safe, only that it wasn't verified."
+            )
 
         # ── 11. Compound red flag bonus ───────────────────────────
         if red_flags >= 3:
@@ -361,9 +368,10 @@ class DomainChecker:
         reasons = list(dict.fromkeys(reasons))[:7]
 
         return {
-            "score":   score,
-            "reasons": reasons,
-            "domains": domains,
+            "score":     score,
+            "reasons":   reasons,
+            "domains":   domains,
+            "ti_status": ti_status,  # not_configured | checked | unavailable
         }
 
     # ── URL/Email Extraction ──────────────────────────────────────
@@ -657,59 +665,111 @@ class DomainChecker:
         return score, reasons
 
     # ── Check: Real-time Threat Intelligence (VirusTotal + Safe Browsing) ──
+    #
+    # TI status values — these describe HOW MUCH we actually know, which is
+    # a different axis from the risk score itself:
+    #   "not_configured" — no API keys set at all, no calls attempted
+    #   "checked"        — at least one call to VT/GSB completed successfully
+    #                      (whether it found something or came back clean)
+    #   "unavailable"    — a key was configured, a call was attempted, and
+    #                      it failed (timeout/network error/non-200). We
+    #                      still fail OPEN on the risk score (never punish
+    #                      a domain just because an API had an outage), but
+    #                      the caller must know this happened so confidence
+    #                      can be reduced without touching risk.
+    #
+    # Previously "not configured", "checked and clean", and "checked but
+    # broken" all collapsed into the identical (0.0, []) output — this made
+    # them indistinguishable to every downstream consumer (scorer.py,
+    # eventually the UI). That's the bug being fixed here.
+    TI_NOT_CONFIGURED = "not_configured"
+    TI_CHECKED         = "checked"
+    TI_UNAVAILABLE      = "unavailable"
+
     def _check_threat_intel(
         self, domains: List[str], urls: List[str]
-    ) -> Tuple[float, List[str]]:
+    ) -> Tuple[float, List[str], str]:
         """
         Cross-references domains/URLs against VirusTotal and Google Safe
         Browsing. Both are optional — if their API keys aren't set in
-        .env, this returns (0.0, []) immediately with no network calls,
-        so the app works identically to before for anyone without keys.
+        .env, this returns (0.0, [], "not_configured") immediately with no
+        network calls, so the app works identically to before for anyone
+        without keys.
 
         Capped to the first 2 domains/URLs per scan to bound latency and
         protect free-tier API quotas (both VT and GSB free tiers are
         rate-limited per day).
+
+        Returns (score, reasons, status) where status is one of
+        TI_NOT_CONFIGURED / TI_CHECKED / TI_UNAVAILABLE. If ANY configured
+        call fails, the overall status is TI_UNAVAILABLE — we'd rather
+        under-claim confidence than over-claim it when only one of several
+        lookups actually succeeded.
         """
         if not GOOGLE_SAFE_BROWSING_KEY and not VIRUSTOTAL_KEY:
-            return 0.0, []
+            return 0.0, [], self.TI_NOT_CONFIGURED
 
         score   = 0.0
         reasons = []
+        any_call_attempted = False
+        any_call_failed    = False
 
         if VIRUSTOTAL_KEY:
             for domain in domains[:2]:
-                vt_score, vt_reasons = self._query_virustotal(domain)
+                any_call_attempted = True
+                vt_score, vt_reasons, vt_ok = self._query_virustotal(domain)
                 score += vt_score
                 reasons.extend(vt_reasons)
+                if not vt_ok:
+                    any_call_failed = True
 
         if GOOGLE_SAFE_BROWSING_KEY:
             for url in urls[:2]:
-                gsb_score, gsb_reasons = self._query_safe_browsing(url)
+                any_call_attempted = True
+                gsb_score, gsb_reasons, gsb_ok = self._query_safe_browsing(url)
                 score += gsb_score
                 reasons.extend(gsb_reasons)
+                if not gsb_ok:
+                    any_call_failed = True
 
-        return score, reasons
+        if not any_call_attempted:
+            # Keys configured but no domains/URLs in the message to check —
+            # this is a real "checked, nothing to check" state, not a failure.
+            status = self.TI_CHECKED
+        elif any_call_failed:
+            status = self.TI_UNAVAILABLE
+        else:
+            status = self.TI_CHECKED
+
+        return score, reasons, status
 
     def _cache_get(self, key: str):
         cached = _THREAT_INTEL_CACHE.get(key)
         if cached is None:
             return None
-        score, reasons, cached_at = cached
+        score, reasons, ok, cached_at = cached
         if time.time() - cached_at > _THREAT_INTEL_CACHE_TTL_SECONDS:
             del _THREAT_INTEL_CACHE[key]
             return None
-        return score, reasons
+        return score, reasons, ok
 
-    def _cache_set(self, key: str, score: float, reasons: List[str]):
-        _THREAT_INTEL_CACHE[key] = (score, reasons, time.time())
+    def _cache_set(self, key: str, score: float, reasons: List[str], ok: bool = True):
+        _THREAT_INTEL_CACHE[key] = (score, reasons, ok, time.time())
 
-    def _query_virustotal(self, domain: str) -> Tuple[float, List[str]]:
+    def _query_virustotal(self, domain: str) -> Tuple[float, List[str], bool]:
+        """
+        Returns (score, reasons, ok) where ok=False means the call itself
+        failed (network error, timeout, non-200) — as opposed to succeeding
+        and finding nothing. score still fails open to 0.0 on failure (an
+        API outage should never itself raise a domain's risk), but `ok`
+        lets the caller distinguish "verified clean" from "couldn't verify."
+        """
         cache_key = f"vt:{domain}"
         cached = self._cache_get(cache_key)
         if cached is not None:
             return cached
 
-        score, reasons = 0.0, []
+        score, reasons, ok = 0.0, [], True
         try:
             resp = requests.get(
                 f"https://www.virustotal.com/api/v3/domains/{domain}",
@@ -737,24 +797,38 @@ class DomainChecker:
                         f"⚠️ VirusTotal: {suspicious} security vendor(s) "
                         f"flagged '{domain}' as suspicious"
                     )
-            # Non-200 (rate limit, unknown domain, bad key, etc.) is
-            # treated as "no data" rather than an error — fail open.
+                # else: verified clean — score stays 0.0, ok stays True.
+                # This is a genuinely different outcome from the branches
+                # below, even though the score is the same.
+            else:
+                # Rate limit, unknown domain, bad key, etc. — the score
+                # correctly fails open (0.0), but this was NOT a
+                # successful clean check, so ok must be False.
+                ok = False
         except Exception:
             # Network error, timeout, malformed response, etc.
-            # Fail open: threat-intel is a bonus signal, never a
-            # single point of failure for the whole detection pipeline.
-            pass
+            # Score fails open (0.0) — threat-intel is a bonus signal,
+            # never a single point of failure for the whole pipeline —
+            # but ok=False so the caller knows this wasn't a real check.
+            ok = False
 
-        self._cache_set(cache_key, score, reasons)
-        return score, reasons
+        # Cache failures too, but with a short TTL override isn't needed
+        # here since the normal TTL already bounds how long a stale
+        # "unavailable" result can linger.
+        self._cache_set(cache_key, score, reasons, ok)
+        return score, reasons, ok
 
-    def _query_safe_browsing(self, url: str) -> Tuple[float, List[str]]:
+    def _query_safe_browsing(self, url: str) -> Tuple[float, List[str], bool]:
+        """
+        Returns (score, reasons, ok) — see _query_virustotal docstring for
+        what ok means. Same fail-open-on-score, honest-on-status contract.
+        """
         cache_key = f"gsb:{url}"
         cached = self._cache_get(cache_key)
         if cached is not None:
             return cached
 
-        score, reasons = 0.0, []
+        score, reasons, ok = 0.0, [], True
         try:
             resp = requests.post(
                 "https://safebrowsing.googleapis.com/v4/threatMatches:find",
@@ -782,11 +856,14 @@ class DomainChecker:
                         f"🚨 Google Safe Browsing: URL matches known "
                         f"{threat_type.replace('_', ' ').title()} database"
                     )
+                # else: verified clean — score 0.0, ok True.
+            else:
+                ok = False
         except Exception:
-            pass
+            ok = False
 
-        self._cache_set(cache_key, score, reasons)
-        return score, reasons
+        self._cache_set(cache_key, score, reasons, ok)
+        return score, reasons, ok
 
     # ── Check 8: Brand Impersonation Patterns ─────────────────────
     def _check_impersonation(self, text: str) -> Tuple[float, List[str]]:
