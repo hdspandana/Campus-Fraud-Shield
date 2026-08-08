@@ -120,22 +120,58 @@ SCAM_CATEGORIES = [
 # ── Risk Labels ──────────────────────────────────────────
 # Score to label mapping (used in scorer.py)
 # score >= 70  → SCAM
-# score >= 40  → SUSPICIOUS
-# score <  40  → SAFE
+# score >= 35  → SUSPICIOUS
+# score <  35  → SAFE
 
 LABEL_SCAM       = "SCAM"
 LABEL_SUSPICIOUS = "SUSPICIOUS"
 LABEL_SAFE       = "SAFE"
 
-SCORE_SCAM_THRESHOLD       = 70.0
-SCORE_SUSPICIOUS_THRESHOLD = 40.0
+SCORE_SCAM_THRESHOLD       = 70.0  # UNCHANGED — see note below
+SCORE_SUSPICIOUS_THRESHOLD = 35.0  # was 40.0 — see note below
 
 # ── Scoring Weights ──────────────────────────────────────
 # Must add up to 1.0 exactly
-WEIGHT_RULES   = 0.35
-WEIGHT_DOMAIN  = 0.30
-WEIGHT_ML      = 0.20
-WEIGHT_HISTORY = 0.15
+#
+# UPDATED from the original 35/30/20/15 split, based on real evidence,
+# not intuition:
+#
+#   - eval/baseline_ablation.py showed the ORIGINAL weights made the
+#     full 4-engine system numerically IDENTICAL to Rules-only —
+#     removing Semantic or FAISS from the formula changed zero
+#     predictions. The two strongest individual engines (Semantic
+#     F1=0.803, FAISS F1=0.716, vs Rules F1=0.535) were being diluted
+#     into having no effect at all.
+#   - eval/weight_threshold_sweep.py grid-searched weight/threshold
+#     combinations and found this region performed much better.
+#   - eval/nested_weight_validation.py then validated that finding
+#     with 5-fold nested cross-validation (searching on 4/5 of the
+#     data, testing on the held-out 1/5, repeated 5x) so the
+#     improvement isn't just overfitting to one small dataset.
+#     Result: mean HELD-OUT F1 = 0.777 ± 0.051 (vs 0.535 for the
+#     original weights) — and SCORE_SUSPICIOUS_THRESHOLD=35 was
+#     independently picked by all 5 of 5 folds, the single most
+#     robust part of this finding.
+#
+# HONEST CAVEAT: this improves recall substantially (~37%→~70% of
+# scams caught) but does NOT preserve a strict zero-false-positive
+# guarantee the way the original weights happened to. Nested
+# validation showed ~3 false positives across 86 held-out examples
+# (~3-4% empirical FPR) under this weighting region — a real,
+# deliberate tradeoff, not an oversight. If false-accusing a
+# legitimate message is judged worse than missing a scam, revisit
+# this before deploying; data/weight_threshold_sweep_results.json has
+# the FPR<=5% and zero-FP candidate lists as alternatives.
+#
+# SCORE_SCAM_THRESHOLD (70.0, unchanged) was NOT validated by this
+# process — the dataset only has binary scam/safe labels, so this eval
+# could only test where the safe/not-safe line should sit
+# (SCORE_SUSPICIOUS_THRESHOLD), not where SUSPICIOUS should become
+# SCAM. Treat 70.0 as still-unvalidated, not confirmed correct.
+WEIGHT_RULES   = 0.25
+WEIGHT_DOMAIN  = 0.20
+WEIGHT_ML      = 0.45
+WEIGHT_HISTORY = 0.10
 
 # ── Demo Messages ────────────────────────────────────────
 # Used by app.py for quick demo buttons

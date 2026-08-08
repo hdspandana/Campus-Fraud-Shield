@@ -34,6 +34,19 @@ from core.pipeline import (
     load_ml_model,
 )
 
+# Single source of truth for weights/thresholds — previously this file
+# had its own hardcoded copies (0.35/0.30/0.20/0.15 for display, and
+# score>=70/40 for color coding) that silently went stale when
+# interfaces.py's real values were updated based on eval evidence.
+from interfaces import (
+    WEIGHT_RULES,
+    WEIGHT_DOMAIN,
+    WEIGHT_ML,
+    WEIGHT_HISTORY,
+    SCORE_SCAM_THRESHOLD,
+    SCORE_SUSPICIOUS_THRESHOLD,
+)
+
 # ── Ensure the model (and metrics.json) exist BEFORE the dashboard
 # section below tries to read them, not only after someone scans ──
 # The bug this fixes: model loading/training previously only happened
@@ -368,10 +381,10 @@ def render_score_bar(score: float, label: str):
 
 def render_engine_breakdown(breakdown: dict):
     engine_meta = {
-        "rules":   ("⚖️ Rules Engine",   "Campus + Expert Rules", 0.35),
-        "domain":  ("🌐 Domain Check",   "URL / Email Analysis",  0.30),
-        "ml":      ("🤖 Semantic AI",    "all-MiniLM-L6-v2",      0.20),
-        "history": ("📚 FAISS History",  "Community Reports",     0.15),
+        "rules":   ("⚖️ Rules Engine",   "Campus + Expert Rules", WEIGHT_RULES),
+        "domain":  ("🌐 Domain Check",   "URL / Email Analysis",  WEIGHT_DOMAIN),
+        "ml":      ("🤖 Semantic AI",    "all-MiniLM-L6-v2",      WEIGHT_ML),
+        "history": ("📚 FAISS History",  "Community Reports",     WEIGHT_HISTORY),
     }
 
     cols = st.columns(4)
@@ -380,8 +393,8 @@ def render_engine_breakdown(breakdown: dict):
         score       = engine_data.get("score", 0)
 
         colour = (
-            "#ff2d55" if score >= 70
-            else "#f39c12" if score >= 40
+            "#ff2d55" if score >= SCORE_SCAM_THRESHOLD
+            else "#f39c12" if score >= SCORE_SUSPICIOUS_THRESHOLD
             else "#00c853"
         )
 
@@ -572,17 +585,23 @@ def render_results(result: dict, student_mode: bool, label: str = "SCAM"):
             st.caption(f"Showing: {mode_label}")
             render_reasons(reasons, student_mode)
 
-# ▼▼▼ PASTE YOUR NEW BLOCK RIGHT HERE ▼▼▼
-
-# ── Gemini LLM Explanation ────────────────────────────────────
+    # ── Gemini LLM Explanation ────────────────────────────────────
+    # Gemini only explains the verdict already decided by the
+    # deterministic pipeline above — it never determines score/label
+    # itself. label/ti_status/confidence_label are passed through so
+    # the explanation is honest about SUSPICIOUS-vs-SCAM certainty and
+    # never claims a threat-intel check happened when it didn't.
     if label != "SAFE" and not SIMULATION_MODE:
         with st.expander("🤖 AI Deep Analysis — Powered by Gemini", expanded=True):
             with st.spinner("Gemini is analysing this message..."):
                 llm_text = get_llm_explanation(
-                st.session_state.get("last_text", ""),
-                score,
-                reasons,
-                result.get("category", "suspicious")
+                    st.session_state.get("last_text", ""),
+                    score,
+                    reasons,
+                    result.get("category", "suspicious"),
+                    label=label,
+                    ti_status=breakdown.get("domain", {}).get("ti_status", "not_configured"),
+                    confidence_label=result.get("confidence_label", "MEDIUM"),
                 )
         if llm_text:
             st.markdown(
@@ -592,11 +611,11 @@ def render_results(result: dict, student_mode: bool, label: str = "SCAM"):
                 f'</div>',
                 unsafe_allow_html=True
             )
-            st.caption("✨ Gemini 1.5 Flash · LLM layer on top of 4-engine pipeline")
+            st.caption("✨ Gemini 2.5 Flash · LLM layer on top of 4-engine pipeline")
         else:
             st.caption("⚠️ Gemini unavailable — set GEMINI_API_KEY in .env")
 
-# ── Similar examples (ML) ─────────────────────────────────────   ← this line already exists
+    # ── Similar examples (ML) ─────────────────────────────────────
     ml_data = breakdown.get("ml", {})
     similar = ml_data.get("similar", [])
     if similar and not SIMULATION_MODE:
