@@ -4,25 +4,66 @@ from typing import List, Dict, Tuple, Any
 from core.homoglyph_normalizer import find_spoofed_brands
 
 # Each pattern: (regex, score_weight, reason_string)
+#
+# BUG FIX: every pattern below previously had a trailing `?` on its
+# (fee|charge|amount|deposit|...) group, which made that group
+# OPTIONAL — meaning e.g. "verification\s*(fee|charge|amount|deposit)?"
+# matched the bare word "verification" alone, with no fee/payment
+# context required at all. Quantified impact: 5 of 34 legitimate
+# messages in data/scam_dataset.csv triggered a fabricated "asks for
+# X payment" reason this way (e.g. "Joining date 15th March" ->
+# "Asks for joining payment"; a delivery tracking SMS -> "Asks for
+# up-front delivery charges"). Fixed by removing the trailing `?` so
+# the fee-word is required, not optional, on every pattern where that
+# was the actual intent.
 FEE_PATTERNS = [
-    (r"registration\s*(fee|charge|amount|deposit|to|for|bhejo|karo)?", 35, "Asks for registration payment"),
-    (r"joining\s*(fee|charge|amount|deposit|to|for|bhejo|karo)?", 35, "Asks for joining payment"),
-    (r"security\s*(deposit|fee|charge|amount)?", 35, "Asks for security deposit"),
-    (r"processing\s*(fee|charge|amount|deposit)?", 35, "Asks for processing payment"),
-    (r"activation\s*(fee|charge|amount|deposit)?", 35, "Asks for profile activation payment"),
-    (r"training\s*(fee|charge|amount|deposit)?", 35, "Asks for mandatory training payment"),
-    (r"documentation\s*(fee|charge|amount|deposit)?", 35, "Asks for documentation fee"),
-    (r"verification\s*(fee|charge|amount|deposit)?", 35, "Asks for background verification fee"),
-    (r"kit\s*(charge|fee|amount)?", 30, "Asks for up-front kit charges"),
-    (r"delivery\s*(charge|fee|amount)?", 30, "Asks for up-front delivery charges"),
+    # \s* required strict adjacency ("registration deposit"), which real
+    # scam phrasing routinely breaks with modifier words in between
+    # ("refundable CAUTION deposit", "registration BY PAYING A... deposit").
+    # \W{0,20}\b allows up to ~3-4 words of unrelated text between the
+    # trigger word and the fee-word, without allowing a match across an
+    # entire unrelated sentence. Verified this doesn't reintroduce the
+    # original bare-word bug: the fee-word group is still mandatory, just
+    # no longer required to be immediately adjacent.
+    (r"registration\W{0,20}\b(fee|charge|amount|deposit|bhejo|karo)\b", 35, "Asks for registration payment"),
+    (r"joining\W{0,20}\b(fee|charge|amount|deposit|bhejo|karo)\b", 35, "Asks for joining payment"),
+    (r"security\W{0,20}\b(deposit|fee|charge|amount)\b", 35, "Asks for security deposit"),
+    (r"processing\W{0,20}\b(fee|charge|amount|deposit)\b", 35, "Asks for processing payment"),
+    (r"activation\W{0,20}\b(fee|charge|amount|deposit)\b", 35, "Asks for profile activation payment"),
+    (r"training\W{0,20}\b(fee|charge|amount|deposit)\b", 35, "Asks for mandatory training payment"),
+    (r"documentation\W{0,20}\b(fee|charge|amount|deposit)\b", 35, "Asks for documentation fee"),
+    (r"verification\W{0,20}\b(fee|charge|amount|deposit)\b", 35, "Asks for background verification fee"),
+    (r"kit\W{0,20}\b(charge|fee|amount)\b", 30, "Asks for up-front kit charges"),
+    (r"delivery\W{0,20}\b(charge|fee|amount)\b", 30, "Asks for up-front delivery charges"),
     (r"stamp\s*duty", 30, "Asks for legal stamp duty payment"),
-    (r"gst\s*(charge|fee|amount)?", 25, "Asks for up-front GST payment"),
-    (r"refundable\s*deposit", 30, "Asks for a refundable security deposit"),
+    (r"gst\W{0,20}\b(charge|fee|amount)\b", 25, "Asks for up-front GST payment"),
+    (r"refundable\W{0,20}\b(deposit|caution\s*deposit)\b", 30, "Asks for a refundable security deposit"),
+    (r"caution\s*deposit", 30, "Asks for a caution deposit (common internship-scam term)"),
     (r"panjikaran\s*shulk", 35, "Asks for registration fee (Hindi)"),
-    (r"fee?\s*bhejo", 35, "Asks to send fee via UPI (Hinglish)"),
+    (r"fee\s*bhejo", 35, "Asks to send fee via UPI (Hinglish)"),
     (r"paisa\s*bhejo", 35, "Asks to send money (Hindi)"),
     (r"payment\s*karo", 30, "Asks to make a payment (Hindi)"),
-    (r"pay\s*(rs\.?|₹)?\s*\d+", 30, "Direct payment request with numeric value"),
+    (r"pay\w*\W{0,25}(rs\.?|₹)\s*\d+", 30, "Direct payment request with numeric value"),
+    (r"\b(rs\.?|₹)\s*\d+\W{0,25}\bpay\b", 30, "Direct payment request with numeric value"),
+]
+
+# ── NEW: PII / identity-harvesting patterns ──────────────────────────
+# Found via manual testing: a message asking directly for Aadhaar number
+# and bank account details, with urgency but no URL and no fee keyword,
+# scored 6/100 (SAFE) — a dangerous miss. FEE_PATTERNS/OTP_PATTERNS have
+# no coverage for "give me your ID/bank details" requests that aren't
+# phrased as OTP-sharing specifically. This is a real, distinct scam
+# category (data harvesting for identity theft / account takeover, not
+# a payment ask) and needs its own pattern set, not a patch onto FEE_PATTERNS.
+PII_HARVEST_PATTERNS = [
+    (r"aadha?a?r\W{0,15}\b(number|card|details)\b", 40, "Requests Aadhaar number/details — high-value ID theft target"),
+    (r"\bpan\s*(card\s*)?number\b", 35, "Requests PAN card number"),
+    (r"bank\s*account\W{0,15}\b(number|details)\b", 40, "Requests bank account number/details"),
+    (r"\bifsc\s*code\b", 30, "Requests bank IFSC code alongside other account details"),
+    (r"debit\s*card\W{0,15}\b(number|details|cvv|pin)\b", 45, "Requests debit card number/CVV/PIN — direct financial fraud risk"),
+    (r"credit\s*card\W{0,15}\b(number|details|cvv|pin)\b", 45, "Requests credit card number/CVV/PIN — direct financial fraud risk"),
+    (r"\bcvv\b", 40, "Requests card CVV — never legitimately requested this way"),
+    (r"send\W{0,15}\b(your\s*)?(id|identity)\W{0,15}proof\b", 25, "Requests identity proof document via message"),
 ]
 
 OTP_PATTERNS = [
@@ -157,6 +198,7 @@ class RulesEngine:
             ("payment",   PAYMENT_PATTERNS),
             ("prize",     PRIZE_PATTERNS),
             ("selection", SELECTION_PATTERNS),
+            ("pii",       PII_HARVEST_PATTERNS),
             ("safe",      SAFE_SIGNALS),
         ]
 
@@ -237,6 +279,7 @@ class RulesEngine:
             ("Payment Pattern",   PAYMENT_PATTERNS),
             ("Prize Pattern",     PRIZE_PATTERNS),
             ("Selection Pattern", SELECTION_PATTERNS),
+            ("PII Harvest Pattern", PII_HARVEST_PATTERNS),
             ("Safe Signal",       SAFE_SIGNALS),
         ]
 
