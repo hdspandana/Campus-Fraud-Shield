@@ -20,9 +20,36 @@ def remove_noise(text: str) -> str:
 
 
 # ─── URL extraction ───────────────────────────────────────────────────────────
+# BUG FIX: the original pattern's third alternative required a trailing
+# "/" after the domain to count as a match at all — meaning bare domain
+# mentions with no path ("Register at internhub-careers.com within 24
+# hours", "Visit fake-portal.in to claim") were invisible to the entire
+# domain-analysis pipeline (zero URLs extracted -> zero domains -> local
+# heuristics AND live threat-intel both silently skipped). This is
+# extremely common real scam phrasing, not an edge case.
+#
+# Fixed by requiring a recognizable TLD instead of a trailing path —
+# this catches bare-domain mentions while avoiding the opposite risk of
+# matching ordinary sentence punctuation as if it were a domain (e.g.
+# "v2.0", "St. Xavier's", "no.1 choice"). Path after the domain, if
+# present, is still captured optionally.
+# NOTE: includes common URL-shortener TLDs (.ly for bit.ly/cutt.ly/ow.ly,
+# .gl for goo.gl, .gd for is.gd) — URL shorteners are one of the most
+# common real scam-link patterns and were previously covered by luck
+# (the old regex's generic [a-zA-Z]{2,} matched anything), so this list
+# needs to explicitly include them or shortener links silently regress.
+_KNOWN_TLDS = (
+    r"com|in|net|org|co|io|xyz|info|biz|gov|edu|me|app|online|site|"
+    r"tech|store|club|top|win|link|click|tk|ml|ga|cf|us|uk|ac\.in|"
+    r"co\.in|gov\.in|edu\.in|nic\.in|org\.in|res\.in|"
+    r"ly|gl|gd|to|cc|sh|be|gg|so"
+)
+
 def extract_urls(text: str) -> list[str]:
     pattern = re.compile(
-        r"(https?://[^\s]+|www\.[^\s]+|[a-zA-Z0-9\-]+\.[a-zA-Z]{2,}/[^\s]*)",
+        r"(https?://[^\s]+|www\.[^\s]+|"
+        r"\b[a-zA-Z0-9](?:[a-zA-Z0-9\-]*[a-zA-Z0-9])?"
+        rf"\.(?:{_KNOWN_TLDS})(?:/[^\s]*)?\b)",
         re.IGNORECASE,
     )
     return pattern.findall(text)
