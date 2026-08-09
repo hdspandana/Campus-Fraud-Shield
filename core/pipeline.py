@@ -46,6 +46,14 @@ except Exception as e:
         "failed to import: %s", e, exc_info=True
     )
 
+# Needed even in SIMULATION_MODE — the fallback formula/breakdown
+# below previously hardcoded the OLD weights (0.35/0.30/0.20/0.15)
+# directly as literals, so it silently went stale when the real
+# weights in interfaces.py were updated based on eval evidence. This
+# import has no dependency on the ML/FAISS stack that can fail above,
+# so it's safe to do unconditionally, outside the try/except.
+from interfaces import WEIGHT_RULES, WEIGHT_DOMAIN, WEIGHT_ML, WEIGHT_HISTORY
+
 
 # ────────────────────────────────────────────────────────────────
 # Cached engine loaders
@@ -169,10 +177,10 @@ def _simulate_scan(text: str) -> dict:
 
     r = breakdown
     formula = (
-        f"Rules Engine   {r['rules']:5.1f} × 0.35 = {r['rules']*0.35:5.1f}\n"
-        f"Domain Check   {r['domain']:5.1f} × 0.30 = {r['domain']*0.30:5.1f}\n"
-        f"Semantic AI    {r['ml']:5.1f} × 0.20 = {r['ml']*0.20:5.1f}\n"
-        f"History FAISS  {r['campus']:5.1f} × 0.15 = {r['campus']*0.15:5.1f}\n"
+        f"Rules Engine   {r['rules']:5.1f} × {WEIGHT_RULES:.2f} = {r['rules']*WEIGHT_RULES:5.1f}\n"
+        f"Domain Check   {r['domain']:5.1f} × {WEIGHT_DOMAIN:.2f} = {r['domain']*WEIGHT_DOMAIN:5.1f}\n"
+        f"Semantic AI    {r['ml']:5.1f} × {WEIGHT_ML:.2f} = {r['ml']*WEIGHT_ML:5.1f}\n"
+        f"History FAISS  {r['campus']:5.1f} × {WEIGHT_HISTORY:.2f} = {r['campus']*WEIGHT_HISTORY:5.1f}\n"
         f"{'─'*42}\n"
         f"Final Score                   = {confidence:5.1f}"
     )
@@ -194,10 +202,10 @@ def _simulate_scan(text: str) -> dict:
         "category_display": category.replace("_", " ").title(),
         "reasons": reasons,
         "breakdown": {
-            "rules":   {"score": r["rules"],  "weight": 0.35, "reasons": reasons},
-            "domain":  {"score": r["domain"], "weight": 0.30, "reasons": []},
-            "ml":      {"score": r["ml"],     "weight": 0.20, "reason": "Simulated"},
-            "history": {"score": r["campus"], "weight": 0.15, "matches": []},
+            "rules":   {"score": r["rules"],  "weight": WEIGHT_RULES, "reasons": reasons},
+            "domain":  {"score": r["domain"], "weight": WEIGHT_DOMAIN, "reasons": []},
+            "ml":      {"score": r["ml"],     "weight": WEIGHT_ML, "reason": "Simulated"},
+            "history": {"score": r["campus"], "weight": WEIGHT_HISTORY, "matches": []},
         },
         "formula": formula,
         "override_applied": override,
