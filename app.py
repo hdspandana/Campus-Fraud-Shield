@@ -527,6 +527,20 @@ def render_results(result: dict, student_mode: bool, label: str = "SCAM"):
             unsafe_allow_html=True,
         )
 
+    # ── What to do (existing function, was never actually called) ──
+    # Found during a full-repo audit: render_action_steps was fully
+    # written but had no call site anywhere in the file, so the single
+    # most actionable piece of the UI for a student -- "what do I do
+    # right now" -- never displayed at all. Placed immediately after
+    # the verdict, before any technical detail, per verdict-first UI.
+    if label != "SAFE" and action.get("steps"):
+        st.markdown(
+            '<p style="text-align:center;font-weight:700;margin:1rem 0 0.5rem;">'
+            '✅ What To Do Now</p>',
+            unsafe_allow_html=True,
+        )
+        render_action_steps(action, label)
+
     # ── Override banner ───────────────────────────────────────────
     if override:
         st.markdown(
