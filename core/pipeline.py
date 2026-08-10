@@ -65,11 +65,34 @@ from interfaces import WEIGHT_RULES, WEIGHT_DOMAIN, WEIGHT_ML, WEIGHT_HISTORY
 
 @lru_cache(maxsize=1)
 def load_scorer():
+    # BUG FOUND during audit: previously this called FraudScorer()
+    # unconditionally, even when SIMULATION_MODE is True (meaning the
+    # `from core.scorer import FraudScorer` import above already
+    # failed) -- referencing a name that was never actually imported
+    # raises a raw, undocumented NameError. Found via api.py's /scan
+    # endpoint returning an unhandled 500 with no useful message.
+    # Callers (api.py, app.py) should check SIMULATION_MODE and use
+    # _simulate_scan() instead of calling this at all -- this guard is
+    # a safety net for any caller that doesn't.
+    if SIMULATION_MODE:
+        raise RuntimeError(
+            "load_scorer() called while SIMULATION_MODE is active -- "
+            f"the real scorer failed to import: {IMPORT_ERRORS[:1]}. "
+            "Callers should check pipeline.SIMULATION_MODE and use "
+            "_simulate_scan() instead of the real engines."
+        )
     return FraudScorer()
 
 
 @lru_cache(maxsize=1)
 def load_ml_model():
+    if SIMULATION_MODE:
+        raise RuntimeError(
+            "load_ml_model() called while SIMULATION_MODE is active -- "
+            f"the real ML classifier failed to import: {IMPORT_ERRORS[:1]}. "
+            "Callers should check pipeline.SIMULATION_MODE and use "
+            "_simulate_scan() instead of the real engines."
+        )
     clf = get_semantic_classifier()
     if not clf.is_trained:
         loaded = clf.load()
@@ -120,6 +143,13 @@ def load_ml_model():
 
 @lru_cache(maxsize=1)
 def load_history():
+    if SIMULATION_MODE:
+        raise RuntimeError(
+            "load_history() called while SIMULATION_MODE is active -- "
+            f"the real history/FAISS engine failed to import: {IMPORT_ERRORS[:1]}. "
+            "Callers should check pipeline.SIMULATION_MODE and use "
+            "_simulate_scan() instead of the real engines."
+        )
     engine = UnifiedHistoryEngine()
     if engine.index.ntotal == 0:
         engine.seed_from_dataset("data/scam_dataset.csv")

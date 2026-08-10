@@ -72,17 +72,37 @@ app.add_middleware(
 # app.dependency_overrides — e.g. swap in a fake scorer that returns a
 # fixed result — without touching core/pipeline.py or monkey-patching
 # module internals.
+#
+# BUG FOUND during audit: previously these called load_*() directly
+# with no error handling. If a core dependency (e.g. sentence-
+# transformers) failed to import -- SIMULATION_MODE=True -- FastAPI's
+# Depends() resolution would raise an unhandled 500 with a raw
+# NameError traceback, before run_full_pipeline's own graceful
+# simulation-fallback logic ever got a chance to run (that fallback
+# only helps once inside the route body, and Depends() resolves
+# before the route body executes). Fixed: catch the RuntimeError
+# load_*() now raises in that case and return a clean, documented 503
+# instead of an opaque crash.
 
 def get_scorer():
-    return load_scorer()
+    try:
+        return load_scorer()
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e))
 
 
 def get_ml_clf():
-    return load_ml_model()
+    try:
+        return load_ml_model()
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e))
 
 
 def get_history():
-    return load_history()
+    try:
+        return load_history()
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e))
 
 
 # ────────────────────────────────────────────────────────────────
