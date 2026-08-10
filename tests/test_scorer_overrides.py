@@ -193,7 +193,10 @@ def test_conflicted_verdict_never_silently_resolves_to_safe(scorer):
     scorer.domain_checker = _StubEngine(score=95.0)  # very high
     scorer.campus_checker = _StubEngine(score=0.0)
 
-    # Weighted average: 0*0.35 + 95*0.30 + ml*0.20 + history*0.15
+    # Weighted average uses interfaces.py's current WEIGHT_RULES/DOMAIN/
+    # ML/HISTORY (0.25/0.20/0.45/0.10 as of the eval-driven re-weighting —
+    # check interfaces.py if this ever needs updating, don't hardcode
+    # weight values in this comment again).
     # With ml/history both low, the average lands well under the SCAM
     # threshold but domain vs the others is a >45 point conflict.
     result = scorer.calculate(text="some message", ml_score=5.0, history_score=0.0)
