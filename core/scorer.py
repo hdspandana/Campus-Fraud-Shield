@@ -157,6 +157,33 @@ class FraudScorer:
         # checks every pair among all 4 signals that feed the weighted
         # formula, so any two engines strongly disagreeing gets caught
         # regardless of which two they are.
+        #
+        # BUG FOUND LIVE (diagnosed via eval/diagnose_false_positive.py
+        # against real messages, not guessed): with 5 real test
+        # messages -- "no money required", "amazon.com", "google.com"
+        # style genuinely-safe text -- conflict-escalation force-
+        # upgraded SAFE to SUSPICIOUS in all 5 cases. In every single
+        # one, Rules AND Domain both scored exactly 0 (correctly --
+        # there's no fee keyword, no malicious domain pattern), and
+        # the "conflict" was actually just Semantic and/or FAISS
+        # disagreeing with each other or with the correct zero
+        # baseline, not a real signal-vs-signal disagreement. Semantic
+        # has a measured ~31% false-positive rate on its own (see
+        # eval/baseline_ablation.py results); FAISS showed similar
+        # noise on negation-heavy text in this diagnostic run. Treating
+        # two noisy engines disagreeing as equivalent to a genuine
+        # conflict was too aggressive.
+        #
+        # Fixed: a conflict only escalates the label if at least one
+        # of the two high-precision deterministic engines (Rules,
+        # Domain -- both measured at Precision=1.000 in nested-CV
+        # validation, meaning when they DO fire, they're essentially
+        # never wrong) is actually part of the disagreeing pair. Two
+        # ML-based engines disagreeing with each other, or with a
+        # correctly-zero deterministic baseline, no longer force an
+        # escalation on their own -- but a genuine Domain-vs-Semantic
+        # or Rules-vs-anything conflict still does, unchanged from
+        # before.
         engine_scores = {
             "rules":   combined_rules_score,
             "domain":  domain_score,
@@ -164,9 +191,14 @@ class FraudScorer:
             "history": history_score,
         }
         CONFLICT_THRESHOLD = 45
+        DETERMINISTIC_ENGINES = {"rules", "domain"}
         conflicting_pairs = [
             (a, b) for a, b in itertools.combinations(engine_scores, 2)
             if abs(engine_scores[a] - engine_scores[b]) > CONFLICT_THRESHOLD
+            and (
+                (a in DETERMINISTIC_ENGINES and engine_scores[a] > 0)
+                or (b in DETERMINISTIC_ENGINES and engine_scores[b] > 0)
+            )
         ]
         conflict_detected = bool(conflicting_pairs)
 
@@ -286,6 +318,7 @@ class FraudScorer:
                 "weight": WEIGHTS["domain"],
                 "reasons": domain_result.get("reasons", []),
                 "domains": domain_result.get("domains", []),
+                "ti_status": ti_status,
             },
 
             "ml": {

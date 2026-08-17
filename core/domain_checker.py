@@ -785,11 +785,31 @@ class DomainChecker:
                 )
                 malicious = stats.get("malicious", 0)
                 suspicious = stats.get("suspicious", 0)
-                if malicious > 0:
+
+                # BUG FOUND LIVE: a single flagged vendor (out of 70+ on
+                # VirusTotal) was triggering a full "malicious" score and
+                # an alarming 🚨 reason -- found by testing google.com,
+                # which got flagged by exactly 1 vendor. This is a well-
+                # known VT usage anti-pattern: single-vendor hits are
+                # frequently noise (one overly aggressive heuristic
+                # engine, shared-hosting/CDN artifacts on large multi-
+                # tenant domains). Standard practice is requiring
+                # consensus across multiple vendors before treating a
+                # domain as genuinely malicious. Fixed: 1 vendor is now
+                # a soft, clearly-labeled low-confidence signal; 2+ is
+                # required for the strong "malicious" classification.
+                if malicious >= 2:
                     score = min(60.0, 15.0 * malicious)
                     reasons.append(
-                        f"🚨 VirusTotal: {malicious} security vendor(s) "
+                        f"🚨 VirusTotal: {malicious} security vendors "
                         f"flagged '{domain}' as malicious"
+                    )
+                elif malicious == 1:
+                    score = 5.0  # soft signal only, not a strong flag
+                    reasons.append(
+                        f"🟡 VirusTotal: 1 security vendor flagged '{domain}' "
+                        f"-- single-vendor flags are often false positives, "
+                        f"treated here as low-confidence, not conclusive"
                     )
                 elif suspicious > 0:
                     score = min(30.0, 10.0 * suspicious)

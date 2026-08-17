@@ -1,0 +1,179 @@
+{
+  "n_examples": 86,
+  "n_scam": 52,
+  "n_safe": 34,
+  "threshold": 50.0,
+  "single_engine": {
+    "rules_only": {
+      "precision": 1.0,
+      "recall": 0.3654,
+      "f1": 0.5352,
+      "false_positive_rate": 0.0,
+      "tp": 19,
+      "tn": 34,
+      "fp": 0,
+      "fn": 33
+    },
+    "domain_only_local": {
+      "precision": 1.0,
+      "recall": 0.2885,
+      "f1": 0.4478,
+      "false_positive_rate": 0.0,
+      "tp": 15,
+      "tn": 34,
+      "fp": 0,
+      "fn": 37
+    },
+    "semantic_only": {
+      "mean": {
+        "precision": 0.7987,
+        "recall": 0.8077,
+        "f1": 0.8031,
+        "false_positive_rate": 0.3117
+      },
+      "std": {
+        "precision": 0.0166,
+        "recall": 0.0121,
+        "f1": 0.0122,
+        "false_positive_rate": 0.03
+      },
+      "per_seed": [
+        {
+          "precision": 0.8235,
+          "recall": 0.8077,
+          "f1": 0.8155,
+          "false_positive_rate": 0.2647,
+          "tp": 42,
+          "tn": 25,
+          "fp": 9,
+          "fn": 10
+        },
+        {
+          "precision": 0.7736,
+          "recall": 0.7885,
+          "f1": 0.781,
+          "false_positive_rate": 0.3529,
+          "tp": 41,
+          "tn": 22,
+          "fp": 12,
+          "fn": 11
+        },
+        {
+          "precision": 0.7963,
+          "recall": 0.8269,
+          "f1": 0.8113,
+          "false_positive_rate": 0.3235,
+          "tp": 43,
+          "tn": 23,
+          "fp": 11,
+          "fn": 9
+        },
+        {
+          "precision": 0.7925,
+          "recall": 0.8077,
+          "f1": 0.8,
+          "false_positive_rate": 0.3235,
+          "tp": 42,
+          "tn": 23,
+          "fp": 11,
+          "fn": 10
+        },
+        {
+          "precision": 0.8077,
+          "recall": 0.8077,
+          "f1": 0.8077,
+          "false_positive_rate": 0.2941,
+          "tp": 42,
+          "tn": 24,
+          "fp": 10,
+          "fn": 10
+        }
+      ]
+    },
+    "history_faiss_only": {
+      "precision": 0.7907,
+      "recall": 0.6538,
+      "f1": 0.7158,
+      "false_positive_rate": 0.2647,
+      "tp": 34,
+      "tn": 25,
+      "fp": 9,
+      "fn": 18
+    }
+  },
+  "combinations": {
+    "rules_plus_domain": {
+      "precision": 1.0,
+      "recall": 0.3654,
+      "f1": 0.5352,
+      "false_positive_rate": 0.0,
+      "tp": 19,
+      "tn": 34,
+      "fp": 0,
+      "fn": 33
+    },
+    "rules_plus_semantic": {
+      "precision": 1.0,
+      "recall": 0.4231,
+      "f1": 0.5946,
+      "false_positive_rate": 0.0,
+      "tp": 22,
+      "tn": 34,
+      "fp": 0,
+      "fn": 30
+    },
+    "full_cfs_weighted_35_30_20_15": {
+      "precision": 1.0,
+      "recall": 0.3654,
+      "f1": 0.5352,
+      "false_positive_rate": 0.0,
+      "tp": 19,
+      "tn": 34,
+      "fp": 0,
+      "fn": 33
+    },
+    "full_minus_rules": {
+      "precision": 1.0,
+      "recall": 0.25,
+      "f1": 0.4,
+      "false_positive_rate": 0.0,
+      "tp": 13,
+      "tn": 34,
+      "fp": 0,
+      "fn": 39
+    },
+    "full_minus_domain": {
+      "precision": 1.0,
+      "recall": 0.3846,
+      "f1": 0.5556,
+      "false_positive_rate": 0.0,
+      "tp": 20,
+      "tn": 34,
+      "fp": 0,
+      "fn": 32
+    },
+    "full_minus_semantic": {
+      "precision": 1.0,
+      "recall": 0.3654,
+      "f1": 0.5352,
+      "false_positive_rate": 0.0,
+      "tp": 19,
+      "tn": 34,
+      "fp": 0,
+      "fn": 33
+    },
+    "full_minus_faiss": {
+      "precision": 1.0,
+      "recall": 0.3654,
+      "f1": 0.5352,
+      "false_positive_rate": 0.0,
+      "tp": 19,
+      "tn": 34,
+      "fp": 0,
+      "fn": 33
+    }
+  },
+  "notes": [
+    "history_faiss_only was evaluated with the FAISS index seeded from this dataset via leave-one-out \u2014 this does NOT reflect day-one production behavior, where the index starts empty. It is also a deterministic score (no random component), so no seed spread is reported for it, unlike semantic_only."
+  ]
+}
