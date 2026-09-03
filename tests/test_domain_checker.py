@@ -132,3 +132,41 @@ def test_analyze_surfaces_ti_status_when_lookup_fails(checker, monkeypatch):
 
     assert result["ti_status"] == "unavailable"
     assert any("did not complete" in r for r in result["reasons"])
+
+
+# ── Regression test: bare (no http://) shortened URLs ──────────────
+# The actual bug: _extract_urls("Claim now: bit.ly/claim2500") == []
+# before this fix — none of the 3 original patterns matched a known
+# shortener domain typed bare, exactly as it would appear in a real
+# forwarded SMS (nobody types "http://" in a text message). This
+# meant the entire domain engine (20% weight) contributed ZERO signal
+# for one of the most common real scam-link formats.
+BARE_SHORTENER_MESSAGES = [
+    "Claim your prize now: bit.ly/claim2500 register fast",
+    "Click here: rb.gy/xyz123 for details",
+    "Check out shorturl.at/abc123 for the form",
+    "Limited time offer, go to cutt.ly/scamlink now",
+]
+
+
+@pytest.mark.parametrize("text", BARE_SHORTENER_MESSAGES)
+def test_bare_shortener_url_is_extracted_and_scored(checker, text):
+    result = checker.analyze(text)
+    assert result["score"] > 0, (
+        f"Bare shortener URL was invisible to the domain engine: {text!r} "
+        f"scored {result['score']}"
+    )
+    assert any("shortened" in r.lower() for r in result["reasons"])
+
+
+def test_ordinary_phrase_with_short_cctld_word_not_falsely_extracted(checker):
+    """
+    Guard against the false-positive risk this fix deliberately avoided:
+    matching the LITERAL known shortener domains (a curated list) rather
+    than broadening the generic bare-domain pattern's TLD list to include
+    every short ccTLD used by shorteners (.at, .to, .gl, etc.) — that
+    broader approach would have made ordinary phrases like "look.at" or
+    "go.to" get mis-extracted as URLs.
+    """
+    urls = checker._extract_urls("I will look.at your assignment and get back to you.")
+    assert urls == []

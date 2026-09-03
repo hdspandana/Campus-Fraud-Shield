@@ -14,8 +14,11 @@
 import os
 import sys
 import time
+import hashlib
 import logging
+import threading
 import traceback
+from collections import OrderedDict
 from functools import lru_cache
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -30,6 +33,117 @@ logger = logging.getLogger("campus_fraud_shield")
 
 SIMULATION_MODE = False
 IMPORT_ERRORS = []
+
+
+# ────────────────────────────────────────────────────────────────
+# Scan result cache — real efficiency, not a toy
+# ────────────────────────────────────────────────────────────────
+# WHY THIS EXISTS: the actual real-world usage pattern here isn't
+# random unique messages — it's the SAME scam text forwarded to many
+# students verbatim (a viral internship-fee or lottery SMS gets copy-
+# pasted, or a browser extension re-checks a page on every reload).
+# Each one currently re-runs the full pipeline: a sentence-transformer
+# encode call, a FAISS search, and 4 engines — for output that would
+# be byte-identical to a scan run five seconds ago. This is a
+# thread-safe, in-memory, size-and-TTL-bounded LRU cache keyed on
+# normalized text, so repeat scans return instantly without
+# recomputing anything.
+#
+# Design choices, and why:
+#   - TTL (default 1h) instead of caching forever: scam campaigns and
+#     the threat-intel/domain-reputation signals behind them change,
+#     so a cached verdict shouldn't live indefinitely.
+#   - Only active when the pipeline is using the real singleton
+#     engines (scorer/ml_clf/history all None, i.e. not dependency-
+#     injected) — tests inject fakes specifically to get controlled,
+#     sometimes-different-per-call results, and caching would
+#     silently break that. Production traffic through app.py/api.py
+#     always hits this path.
+#   - Every cache hit skips history.add_report() too — which matters
+#     beyond speed: without this, the same forwarded scam text
+#     scanned by 50 students would previously insert 50 near-
+#     duplicate entries into the FAISS history index. A cache hit
+#     means "we've already recorded this exact text," so skipping the
+#     duplicate write is correct, not just faster.
+class ScanCache:
+    def __init__(self, maxsize: int = 500, ttl_seconds: int = 3600):
+        self.maxsize = maxsize
+        self.ttl_seconds = ttl_seconds
+        self._store: "OrderedDict[str, tuple]" = OrderedDict()  # key -> (result, inserted_at)
+        self._lock = threading.Lock()
+        self.hits = 0
+        self.misses = 0
+
+    @staticmethod
+    def _key(text: str) -> str:
+        # Normalize whitespace/case before hashing so trivial
+        # differences (extra spaces, forwarded-message capitalization
+        # changes) still hit the cache — the pipeline's own engines
+        # are already largely case/whitespace-insensitive, so this
+        # doesn't create any behavior the pipeline wouldn't already
+        # produce for both variants individually.
+        normalized = " ".join(text.strip().lower().split())
+        return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+
+    def get(self, text: str):
+        key = self._key(text)
+        with self._lock:
+            entry = self._store.get(key)
+            if entry is None:
+                self.misses += 1
+                return None
+            result, inserted_at = entry
+            if time.time() - inserted_at > self.ttl_seconds:
+                del self._store[key]
+                self.misses += 1
+                return None
+            self._store.move_to_end(key)  # mark as recently used
+            self.hits += 1
+            return result
+
+    def set(self, text: str, result: dict) -> None:
+        key = self._key(text)
+        with self._lock:
+            self._store[key] = (result, time.time())
+            self._store.move_to_end(key)
+            while len(self._store) > self.maxsize:
+                self._store.popitem(last=False)  # evict least-recently-used
+
+    def stats(self) -> dict:
+        with self._lock:
+            total = self.hits + self.misses
+            return {
+                "size": len(self._store),
+                "maxsize": self.maxsize,
+                "ttl_seconds": self.ttl_seconds,
+                "hits": self.hits,
+                "misses": self.misses,
+                "hit_rate": round(self.hits / total, 4) if total > 0 else 0.0,
+            }
+
+    def clear(self) -> None:
+        with self._lock:
+            self._store.clear()
+            self.hits = 0
+            self.misses = 0
+
+
+# Module-level singleton — one cache per process, same lifetime as the
+# lru_cache'd engine loaders below.
+_scan_cache = ScanCache(
+    maxsize=int(os.getenv("SCAN_CACHE_MAXSIZE", "500")),
+    ttl_seconds=int(os.getenv("SCAN_CACHE_TTL_SECONDS", "3600")),
+)
+
+
+def get_cache_stats() -> dict:
+    """Exposed for api.py's /metrics endpoint and for tests."""
+    return _scan_cache.stats()
+
+
+def clear_scan_cache() -> None:
+    """Exposed for tests and for an admin/debug endpoint if one is added later."""
+    _scan_cache.clear()
 
 try:
     from core.scorer import FraudScorer
@@ -280,6 +394,12 @@ def run_full_pipeline(
     simulation if any engine throws — a bad scan should never take
     down the whole app/API.
 
+    Cached: identical text (after whitespace/case normalization) is
+    served from an in-memory LRU+TTL cache without recomputing
+    anything, when using the default singleton engines — see
+    ScanCache above. Bypassed automatically when scorer/ml_clf/history
+    are supplied directly (tests, dependency injection).
+
     scorer / ml_clf / history are optional dependency-injection points:
     - app.py (Streamlit) calls this with no args — defaults kick in and
       call the normal cached loaders, so existing call sites don't
@@ -292,6 +412,26 @@ def run_full_pipeline(
         result = _simulate_scan(text)
         result["action"] = get_action_safe(result["final_score"], result["category"], text)
         return result
+
+    # Cache only applies to the real singleton engines (see ScanCache's
+    # docstring above for why) — a caller supplying its own
+    # scorer/ml_clf/history (tests, dependency-injected mocks) bypasses
+    # it entirely, same as before this feature existed.
+    use_cache = scorer is None and ml_clf is None and history is None
+    if use_cache:
+        cached = _scan_cache.get(text)
+        if cached is not None:
+            # Deliberately NOT cached alongside the detection result:
+            # get_action_safe()'s complaint_text embeds today's date
+            # (time.strftime(...)) — caching that would mean a cache
+            # hit served hours or days later shows a stale date. This
+            # call is cheap (string formatting, no ML/FAISS), so
+            # there's no efficiency cost to recomputing it fresh on
+            # every hit while still skipping the expensive 4-engine
+            # pipeline itself.
+            result = dict(cached)
+            result["action"] = get_action_safe(result["final_score"], result["category"], text)
+            return result
 
     try:
         scorer  = scorer  if scorer  is not None else load_scorer()
@@ -314,21 +454,55 @@ def run_full_pipeline(
             history_matches=hist_matches,
         )
 
+        if use_cache:
+            _scan_cache.set(text, result)
+
         result["action"] = get_action_safe(result["final_score"], result["category"], text)
 
-        try:
-            history.add_report(
-                text=text,
-                label=1 if result["label"] == "SCAM" else 0,
-                category=result["category"],
-                source="user_scan",
-                score=result["final_score"],
+        # WHY THIS GATE EXISTS: history.add_report() below feeds
+        # directly into a HARD override in scorer.py — a future
+        # message with >=0.90 FAISS similarity to a SCAM-labeled
+        # history entry gets forced to a score of >=80, regardless of
+        # what the other 3 engines say. Every scan used to write its
+        # OWN verdict back into that same index with zero human
+        # review — meaning a single low-confidence false SCAM call
+        # could compound: once written, it forces future near-
+        # identical text toward the same wrong verdict instead of
+        # being independently re-evaluated. That's a real self-
+        # reinforcing feedback loop, not a hypothetical one.
+        #
+        # SAFE-labeled writes carry no equivalent risk — scorer.py has
+        # no "similar-to-a-past-SAFE-report" score-suppression path —
+        # so only SCAM verdicts need this gate. confidence_label
+        # already exists in the scorer's output specifically to
+        # capture "how much do we trust this particular verdict"
+        # (accounts for engine conflict, missing threat-intel data,
+        # etc.), so this reuses an existing signal rather than adding
+        # a new one.
+        confidence_label = result.get("confidence_label", "LOW")
+        skip_history_write = (result["label"] == "SCAM" and confidence_label != "HIGH")
+
+        if skip_history_write:
+            logger.info(
+                "Skipped history write for a %s-confidence SCAM verdict "
+                "(score=%.1f) — not confident enough to become a future "
+                "FAISS-override precedent for similar messages.",
+                confidence_label, result["final_score"],
             )
-        except Exception:
-            # Non-critical: failing to log this scan to history should
-            # never break the scan result itself, but we do want to
-            # know about it rather than silently losing the failure.
-            logger.warning("Failed to record scan to history", exc_info=True)
+        else:
+            try:
+                history.add_report(
+                    text=text,
+                    label=1 if result["label"] == "SCAM" else 0,
+                    category=result["category"],
+                    source="user_scan",
+                    score=result["final_score"],
+                )
+            except Exception:
+                # Non-critical: failing to log this scan to history should
+                # never break the scan result itself, but we do want to
+                # know about it rather than silently losing the failure.
+                logger.warning("Failed to record scan to history", exc_info=True)
 
         return result
 

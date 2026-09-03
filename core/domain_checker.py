@@ -376,17 +376,40 @@ class DomainChecker:
 
     # ── URL/Email Extraction ──────────────────────────────────────
     def _extract_urls(self, text: str) -> List[str]:
+        # Deliberately kept as a class-level cached pattern rather than
+        # rebuilt on every call — URL_SHORTENERS is a module constant,
+        # so the regex it produces never changes at runtime.
+        shortener_pattern = self._shortener_pattern()
+
         patterns = [
             r"https?://[^\s<>\"']+",
             r"www\.[^\s<>\"']+",
             r"[a-zA-Z0-9][a-zA-Z0-9\-]{1,61}[a-zA-Z0-9]\."
             r"(?:com|in|org|net|gov|co\.in|ac\.in|xyz|tk|ml|ga|cf|gq|"
             r"top|click|loan|work|date|win|info|biz|site|online)[^\s]*",
+            # NEW: bare (no http:// or www. prefix) mentions of a KNOWN
+            # url-shortener domain, e.g. "bit.ly/claim2500" typed
+            # exactly as it would appear in a real SMS/WhatsApp forward
+            # — people don't type "http://" in a text message. Before
+            # this, _extract_urls("Claim now: bit.ly/claim2500") == []
+            # because none of the 3 patterns above matched it (the
+            # generic bare-domain pattern's TLD list doesn't include
+            # .ly/.gd/.gy/etc., and broadening it to short ccTLDs would
+            # risk false-positive-extracting ordinary phrases like
+            # "look.at" or "go.to" as URLs). Matching the literal known
+            # shortener domains has no such false-positive risk since
+            # they're an explicit, curated list, not a generic pattern.
+            shortener_pattern,
         ]
         urls = []
         for pattern in patterns:
             urls.extend(re.findall(pattern, text, re.IGNORECASE))
         return list(set(urls))
+
+    @staticmethod
+    def _shortener_pattern() -> str:
+        escaped = sorted((re.escape(d) for d in URL_SHORTENERS), key=len, reverse=True)
+        return r"\b(?:" + "|".join(escaped) + r")(?:/[^\s<>\"']*)?"
 
     def _extract_emails(self, text: str) -> List[str]:
         return re.findall(
