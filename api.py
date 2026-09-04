@@ -18,6 +18,7 @@
 # ═════════════════════════════════════════════════════════════════
 
 import logging
+import time
 from typing import Any, Dict, List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, APIRouter
@@ -29,6 +30,7 @@ from core.pipeline import (
     load_scorer,
     load_ml_model,
     load_history,
+    get_cache_stats,
     SIMULATION_MODE,
     IMPORT_ERRORS,
 )
@@ -60,6 +62,48 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# ────────────────────────────────────────────────────────────────
+# Lightweight in-process observability
+# ────────────────────────────────────────────────────────────────
+# Deliberately NOT prometheus_client (a real dependency, a real metrics
+# port, real scrape-config) — this is a single-process demo/hackathon
+# deployment, not a multi-instance production service behind a load
+# balancer where Prometheus would actually make sense. A hand-rolled
+# JSON endpoint gives the same practical value (uptime, throughput,
+# latency, cache effectiveness) with zero new dependencies, and is
+# trivial to swap for real Prometheus later if this ever runs at a
+# scale where that's warranted — the counters below would map directly
+# onto prometheus_client Counter/Histogram objects.
+import threading as _threading
+
+_metrics_lock = _threading.Lock()
+_metrics = {
+    "start_time": time.time(),
+    "requests_total": 0,
+    "requests_by_endpoint": {},   # {"POST /api/v1/scan": 42, ...}
+    "scan_latency_ms_total": 0.0,  # sum, for a running average — not
+                                    # storing every sample (unbounded
+                                    # memory growth on a long-running
+                                    # process for no real benefit here)
+    "scan_count": 0,
+}
+
+
+@app.middleware("http")
+async def _track_request_metrics(request, call_next):
+    start = time.perf_counter()
+    response = await call_next(request)
+    elapsed_ms = (time.perf_counter() - start) * 1000
+    endpoint = f"{request.method} {request.url.path}"
+    with _metrics_lock:
+        _metrics["requests_total"] += 1
+        _metrics["requests_by_endpoint"][endpoint] = _metrics["requests_by_endpoint"].get(endpoint, 0) + 1
+        if request.url.path == "/api/v1/scan":
+            _metrics["scan_latency_ms_total"] += elapsed_ms
+            _metrics["scan_count"] += 1
+    return response
 
 
 # ────────────────────────────────────────────────────────────────
@@ -141,6 +185,16 @@ class HealthResponse(BaseModel):
     import_errors: List[str] = []
 
 
+class MetricsResponse(BaseModel):
+    uptime_seconds: float
+    requests_total: int
+    requests_by_endpoint: Dict[str, int]
+    scan_count: int
+    avg_scan_latency_ms: Optional[float] = None
+    cache: Dict[str, Any]
+    simulation_mode: bool
+
+
 # ────────────────────────────────────────────────────────────────
 # Versioned routes — /api/v1/...
 # ────────────────────────────────────────────────────────────────
@@ -162,6 +216,32 @@ def health():
         "simulation_mode": SIMULATION_MODE,
         "import_errors": IMPORT_ERRORS if SIMULATION_MODE else [],
     }
+
+
+@v1.get("/metrics", response_model=MetricsResponse)
+def metrics():
+    """
+    Basic operational visibility: request volume, average /scan
+    latency, and scan-cache effectiveness (hit rate directly shows how
+    much duplicate/forwarded-scam traffic the cache in
+    core/pipeline.py is absorbing). Not authenticated — if this API is
+    ever deployed publicly, put this behind the same auth as any other
+    internal endpoint before exposing it.
+    """
+    with _metrics_lock:
+        avg_latency = (
+            _metrics["scan_latency_ms_total"] / _metrics["scan_count"]
+            if _metrics["scan_count"] > 0 else None
+        )
+        return {
+            "uptime_seconds": round(time.time() - _metrics["start_time"], 1),
+            "requests_total": _metrics["requests_total"],
+            "requests_by_endpoint": dict(_metrics["requests_by_endpoint"]),
+            "scan_count": _metrics["scan_count"],
+            "avg_scan_latency_ms": round(avg_latency, 2) if avg_latency is not None else None,
+            "cache": get_cache_stats(),
+            "simulation_mode": SIMULATION_MODE,
+        }
 
 
 @v1.post("/scan", response_model=ScanResponse)
@@ -193,5 +273,6 @@ def root():
         "service": "Campus Fraud Shield API",
         "docs": "/docs",
         "health": "/api/v1/health",
+        "metrics": "/api/v1/metrics",
         "scan_endpoint": "POST /api/v1/scan",
     }

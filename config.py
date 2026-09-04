@@ -21,24 +21,23 @@ VIRUSTOTAL_KEY           = os.getenv("VIRUSTOTAL_API_KEY", "")
 # anywhere, import them from interfaces.py, not from here.
 
 # ─── Colors ──────────────────────────────────────────────────────────────────
-COLOR_SAFE       = "#22c55e"
-COLOR_SUSPICIOUS = "#f59e0b"
-COLOR_SCAM       = "#ef4444"
+# REMOVED: COLOR_SAFE / COLOR_SUSPICIOUS / COLOR_SCAM — confirmed zero
+# references anywhere; app.py uses its own dark-theme palette
+# (#00d4ff etc.), never these.
 
 # ─── File Paths ──────────────────────────────────────────────────────────────
-REPORTED_SCAMS_FILE  = "data/reported_scams.json"
-TRUSTED_DOMAINS_FILE = "data/trusted_domains.json"
-SCAM_DATASET_FILE    = "data/scam_dataset.csv"
-MODEL_FILE           = "models/scam_classifier.pkl"
-VECTORIZER_FILE      = "models/vectorizer.pkl"
-
-# ─── Overrides ───────────────────────────────────────────────────────────────
-# Trusted platform + payment keyword = force suspicious
-PAYMENT_OVERRIDE_KEYWORDS = [
-    "registration fee", "processing fee", "refundable deposit",
-    "pay", "upi", "gpay", "phonepe", "paytm", "scan qr",
-    "transfer", "send money", "₹", "rs.", "otp", "bank account",
-]
+# REMOVED (this week's dead-code pass): SCAM_DATASET_FILE, MODEL_FILE,
+# VECTORIZER_FILE, REPORTED_SCAMS_FILE, TRUSTED_DOMAINS_FILE — confirmed
+# via a full-repo grep to have zero references anywhere outside this
+# file. models/scam_classifier.pkl (what MODEL_FILE pointed to) is a
+# tracked-but-orphaned binary from an earlier TF-IDF-era architecture;
+# the real model is core/ml_model.py's CLASSIFIER_PATH
+# ("models/semantic_classifier.pkl"). If you want it gone from git
+# history too: `git rm models/scam_classifier.pkl`.
+#
+# PAYMENT_OVERRIDE_KEYWORDS also removed — zero references; the actual,
+# live fee/payment detection is core/rules_engine.py's FEE_PATTERNS
+# and PAYMENT_PATTERNS, which this list never fed into.
 
 # ─── Indian Context ──────────────────────────────────────────────────────────
 HELPLINES = {

@@ -28,10 +28,10 @@ A message is scored by **4 independent engines**, combined with weighted scoring
         │           Shared Detection Pipeline       │
         │              (core/pipeline.py)           │
         ├─────────────────────────────────────────┤
-        │  Rules Engine        35%   regex/keyword  │
-        │  Domain/URL Check    30%   + threat-intel │
-        │  Semantic ML         20%   sentence embed │
-        │  History (FAISS)     15%   past reports   │
+        │  Rules Engine        25%   regex/keyword  │
+        │  Domain/URL Check    20%   + threat-intel │
+        │  Semantic ML         45%   sentence embed │
+        │  History (FAISS)     10%   past reports   │
         └─────────────────────────────────────────┘
                               │
                     ┌─────────┴─────────┐
@@ -93,6 +93,12 @@ This is intentionally reported plainly, including the limitation:
 | Categories with < 5 examples | `invest_scam`, `telegram_job`, `upi_request`, `credential_harvesting`, `job_fee`, `scholarship_fee`, `sextortion` |
 
 **Why report a number this modest instead of a bigger one:** the semantic ML engine is one of 4 engines, not the sole decision-maker — the rules engine, domain/threat-intel checks, and override logic all compensate for its current limitations. The honest path to a higher number is adding more labeled examples to the weak categories above, not tuning around a small dataset until the number looks better than it is. Run `python train/train_model.py` after adding data to regenerate all of these metrics, including a full confusion matrix, viewable in the app's "📊 Model Performance" panel.
+
+**Why the ML engine's weight is the real bottleneck, not the architecture:** with only 86 labeled examples, no classifier — logistic regression, a bigger transformer, or otherwise — can learn much more than this from the raw text alone. Two changes address that directly instead of just tuning around it:
+
+- **Structured feature fusion** (`core/ml_model.py`) — a small set of deterministic lexical signals (OTP mention, currency amount, payment-app name, phone number, urgency language, "congratulations/won" phrasing) is concatenated onto the sentence embedding before the classifier sees it. These are exactly the signals a linear model struggles to reliably learn from a few dozen examples but which a hand-written regex always catches correctly — so the classifier gets them for free instead of hoping the embedding space encodes them.
+- **`data/augment_dataset.py`** — generates template-based synthetic candidates for the thinnest categories (job/fee/lottery/OTP-style patterns), written to a separate `data/scam_dataset_augmented.csv` for human review, never auto-merged. Sextortion is deliberately excluded from this — see `data/dataset.md`'s "Why sextortion wasn't padded to 5" for the reasoning, which this script follows rather than overrides. If you do merge reviewed candidates into the training set, use `GroupKFold` on the `template_group` column instead of the default stratified split, so near-duplicate template variants can't land on both sides of a cross-validation fold and quietly inflate the accuracy number.
+- **Swappable embedding model** — `SEMANTIC_MODEL_NAME` (env var, defaults to `all-MiniLM-L6-v2`) is read by both `core/ml_model.py` and `core/history_engine.py`, so a stronger or multilingual model (e.g. `paraphrase-multilingual-mpnet-base-v2`, given the Hinglish/code-mixed scam text this project targets) can be tried without touching code — just re-run `train_model.py` after setting it.
 
 ---
 
@@ -181,6 +187,7 @@ python -m pytest
 |---|---|---|
 | GET | `/` | Service info |
 | GET | `/api/v1/health` | Health check — reports whether real engines loaded or the app is in simulation mode |
+| GET | `/api/v1/metrics` | Request volume, average `/scan` latency, and scan-cache hit rate |
 | POST | `/api/v1/scan` | Analyze a message, returns full score breakdown + explanation |
 
 Example:
@@ -189,6 +196,22 @@ curl -X POST http://127.0.0.1:8000/api/v1/scan \
   -H "Content-Type: application/json" \
   -d '{"text": "You won Rs.25000 lottery! Pay Rs.500 processing fee to claim"}'
 ```
+
+---
+
+## Deployment
+
+```bash
+docker compose up --build
+```
+
+Runs both the FastAPI service (`localhost:8000/docs`) and the Streamlit UI (`localhost:8501`) from a single multi-stage image — see `Dockerfile`/`docker-compose.yml`. Both share `core/pipeline.py`'s code path directly (no HTTP hop between them), so there's no risk of behavior drifting between the two surfaces. Named volumes persist the trained model and reported-scam history across restarts.
+
+---
+
+## Efficiency: scan result caching
+
+The same scam text gets forwarded verbatim to many students — that's the actual real-world traffic pattern, not random unique messages. `core/pipeline.py` keeps a thread-safe, in-memory LRU+TTL cache (`SCAN_CACHE_MAXSIZE`/`SCAN_CACHE_TTL_SECONDS` env vars, default 500 entries / 1 hour) keyed on whitespace/case-normalized text. A cache hit skips the sentence-transformer encode call, the FAISS search, and all 4 engines entirely — and also skips writing a near-duplicate entry to the history index for what's already been recorded. Check `/api/v1/metrics`'s `cache.hit_rate` to see how much real traffic this is absorbing. Bypassed automatically for dependency-injected calls (tests) so it can never interfere with test isolation.
 
 ---
 

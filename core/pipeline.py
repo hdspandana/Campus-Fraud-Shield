@@ -167,6 +167,7 @@ except Exception as e:
 # import has no dependency on the ML/FAISS stack that can fail above,
 # so it's safe to do unconditionally, outside the try/except.
 from interfaces import WEIGHT_RULES, WEIGHT_DOMAIN, WEIGHT_ML, WEIGHT_HISTORY
+from config import HELPLINES, REPORT_PORTALS
 
 
 # ────────────────────────────────────────────────────────────────
@@ -331,9 +332,9 @@ def _simulate_scan(text: str) -> dict:
 
     action = {
         "steps": ["Do NOT pay any fee", "Block the sender immediately",
-                  "Report at cybercrime.gov.in", "Call helpline 1930"],
-        "helpline": "1930",
-        "online_url": "https://cybercrime.gov.in",
+                  f"Report at {REPORT_PORTALS['Cyber Crime Portal']}", f"Call helpline {HELPLINES['Cyber Crime']}"],
+        "helpline": HELPLINES["Cyber Crime"],
+        "online_url": f"https://{REPORT_PORTALS['Cyber Crime Portal']}",
         "complaint_text": f"I received a suspicious message on {time.strftime('%d/%m/%Y')}.\n"
                           f"Message preview: \"{text[:120]}...\"\n"
                           f"Please investigate this fraud attempt.",

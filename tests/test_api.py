@@ -110,3 +110,31 @@ def test_root_endpoint_points_to_versioned_paths(client):
     assert r.status_code == 200
     body = r.json()
     assert "/api/v1" in body["health"]
+
+
+def test_metrics_endpoint_reports_request_and_cache_stats(client):
+    """
+    /metrics is used with FakeScorer/FakeMLClf/FakeHistory injected via
+    dependency_overrides — the same fixture as every other test here —
+    which means the scan-cache in core/pipeline.py is bypassed (by
+    design, see ScanCache's docstring) for these calls. This test
+    checks the endpoint's SHAPE and that request counting works, not
+    real cache hit behavior (that's covered in test_pipeline.py against
+    ScanCache directly, and in
+    test_run_full_pipeline_cache_hit_skips_engines_and_history_write
+    against the real non-DI code path).
+    """
+    client.get("/api/v1/health")
+    client.post("/api/v1/scan", json={"text": "Share your OTP to claim prize"})
+
+    r = client.get("/api/v1/metrics")
+    assert r.status_code == 200
+    body = r.json()
+
+    assert body["requests_total"] >= 2  # the two calls above, plus this /metrics call gets counted after
+    assert body["scan_count"] >= 1
+    assert body["avg_scan_latency_ms"] is not None
+    assert body["avg_scan_latency_ms"] >= 0
+    assert "cache" in body
+    assert "hit_rate" in body["cache"]
+    assert any(ep.endswith("/api/v1/scan") for ep in body["requests_by_endpoint"])

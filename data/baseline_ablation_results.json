@@ -6,13 +6,13 @@
   "single_engine": {
     "rules_only": {
       "precision": 1.0,
-      "recall": 0.3654,
-      "f1": 0.5352,
+      "recall": 0.3077,
+      "f1": 0.4706,
       "false_positive_rate": 0.0,
-      "tp": 19,
+      "tp": 16,
       "tn": 34,
       "fp": 0,
-      "fn": 33
+      "fn": 36
     },
     "domain_only_local": {
       "precision": 1.0,
@@ -114,13 +114,13 @@
     },
     "rules_plus_semantic": {
       "precision": 1.0,
-      "recall": 0.4231,
-      "f1": 0.5946,
+      "recall": 0.3846,
+      "f1": 0.5556,
       "false_positive_rate": 0.0,
-      "tp": 22,
+      "tp": 20,
       "tn": 34,
       "fp": 0,
-      "fn": 30
+      "fn": 32
     },
     "full_cfs_weighted_35_30_20_15": {
       "precision": 1.0,
@@ -144,13 +144,13 @@
     },
     "full_minus_domain": {
       "precision": 1.0,
-      "recall": 0.3846,
-      "f1": 0.5556,
+      "recall": 0.3462,
+      "f1": 0.5143,
       "false_positive_rate": 0.0,
-      "tp": 20,
+      "tp": 18,
       "tn": 34,
       "fp": 0,
-      "fn": 32
+      "fn": 34
     },
     "full_minus_semantic": {
       "precision": 1.0,
@@ -164,13 +164,13 @@
     },
     "full_minus_faiss": {
       "precision": 1.0,
-      "recall": 0.3654,
-      "f1": 0.5352,
+      "recall": 0.3462,
+      "f1": 0.5143,
       "false_positive_rate": 0.0,
-      "tp": 19,
+      "tp": 18,
       "tn": 34,
       "fp": 0,
-      "fn": 33
+      "fn": 34
     }
   },
   "notes": [

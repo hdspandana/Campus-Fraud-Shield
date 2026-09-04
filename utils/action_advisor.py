@@ -6,8 +6,31 @@
 # ═════════════════════════════════════════════════════════════════
 
 import re
+import sys
+import os
 import datetime
 from typing import Dict, Any, List
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import HELPLINES, REPORT_PORTALS
+
+# "1930" (the national cyber-crime helpline) and "cybercrime.gov.in"
+# were previously hardcoded as literal strings 9 separate times below
+# — once per category. All 9 happened to agree with each other, but
+# that was luck, not a guarantee: this is the exact same "same fact,
+# copied everywhere, no single source of truth" pattern that caused
+# the WEIGHT_RULES/WEIGHT_DOMAIN/etc. staleness bugs found and fixed
+# elsewhere in this codebase (README, app.py, scorer.py docstrings,
+# architecture_viz.py, baseline_ablation.py, interfaces.py's own
+# SCORER_OUTPUT template all independently drifted from the real
+# weight values at one point or another). config.py's HELPLINES /
+# REPORT_PORTALS dicts already existed with this exact data but were
+# never actually imported by anything — sourcing from them here means
+# updating a helpline number is now a one-line change, not an
+# 9-occurrence grep-and-replace someone has to remember to do
+# completely.
+_CYBER_HELPLINE = HELPLINES["Cyber Crime"]
+_CYBER_PORTAL = f"https://{REPORT_PORTALS['Cyber Crime Portal']}"
 
 # ── Action Blueprints Configuration ──────────────────────────────
 ACTIONS_CONFIG = {
@@ -19,8 +42,8 @@ ACTIONS_CONFIG = {
             "Report the occurrence on the official corporate platform being impersonated (e.g., Internshala Help desk).",
             "Alert your college placement cell or student WhatsApp group instantly with screenshots to prevent peer leakage."
         ],
-        "helpline": "1930",
-        "online_url": "https://cybercrime.gov.in",
+        "helpline": _CYBER_HELPLINE,
+        "online_url": _CYBER_PORTAL,
         "template": (
             "I received a fraudulent internship offer impersonating a recognized recruitment portal on {date}. "
             "The bad actor attempted to extract an unverified up-front fee under the pretext of 'Registration/Onboarding'.\n"
@@ -38,7 +61,7 @@ ACTIONS_CONFIG = {
             "Cross-verify the job ID directly on the company's official corporate portal careers branch.",
             "Log the transaction frames and report the banking identifiers directly on the cybercrime.gov.in portal."
         ],
-        "helpline": "1930",
+        "helpline": _CYBER_HELPLINE,
         "online_url": "https://cybercrime.gov.in/Webform/Crime_DetailsPage.aspx",
         "template": (
             "I was targeted by a corporate employment scam on {date}. The perpetrator sent an unsolicited job offer "
@@ -57,7 +80,7 @@ ACTIONS_CONFIG = {
             "Manually log in directly to scholarships.gov.in to confirm compliance status.",
             "File an official grievance stack with the institutional nodal officer of your university."
         ],
-        "helpline": "1930",
+        "helpline": _CYBER_HELPLINE,
         "online_url": "https://scholarships.gov.in",
         "template": (
             "An entity attempted to commit scholarship extraction fraud on my profile on {date}. "
@@ -77,8 +100,8 @@ ACTIONS_CONFIG = {
             "SBI: 1800-11-2211 | HDFC: 1800-202-6161 | ICICI: 1800-1080 | Axis: 1800-419-5959",
             "File a financial fraud tracking request on the national portal within the golden hour parameter."
         ],
-        "helpline": "1930",
-        "online_url": "https://cybercrime.gov.in",
+        "helpline": _CYBER_HELPLINE,
+        "online_url": _CYBER_PORTAL,
         "template": (
             "URGENT: Financial account takeover mapping logged on {date}. "
             "The malicious endpoint attempted to extract a dynamic high-value OTP token under bank service deactivation pretexts.\n"
@@ -96,8 +119,8 @@ ACTIONS_CONFIG = {
             "Block the group coordinate strings on WhatsApp or Telegram immediately.",
             "Do not pass over banking KYC profile details or location data links."
         ],
-        "helpline": "1930",
-        "online_url": "https://cybercrime.gov.in",
+        "helpline": _CYBER_HELPLINE,
+        "online_url": _CYBER_PORTAL,
         "template": (
             "Perpetrator attempted lottery extortion mechanics on my device on {date}. "
             "Sent an advance win framework claiming high-value currency award distribution under false lucky draw parameters.\n"
@@ -114,8 +137,8 @@ ACTIONS_CONFIG = {
             "Do not link your main banking accounts to unverified web app payout profiles.",
             "Report the coordinate tracking groups immediately to cyber cell authorities."
         ],
-        "helpline": "1930",
-        "online_url": "https://cybercrime.gov.in",
+        "helpline": _CYBER_HELPLINE,
+        "online_url": _CYBER_PORTAL,
         "template": (
             "I was pulled into a high-yield structured Task/Part-Time employment trap on {date}. "
             "Perpetrators used algorithmic social media tasks to build trust, then blocked withdrawal options until an escrow payment was processed.\n"
@@ -132,7 +155,7 @@ ACTIONS_CONFIG = {
             "Visit your localized physical brick-and-mortar branch manager to audit profile settings directly.",
             "Report suspicious phishing numbers to the financial service provider node."
         ],
-        "helpline": "1930",
+        "helpline": _CYBER_HELPLINE,
         "online_url": "https://www.rbi.org.in/commonman/English/Scripts/AgainstBank.aspx",
         "template": (
             "Perpetrators attempted financial institutional impersonation vector mapping on {date}. "
@@ -149,8 +172,8 @@ ACTIONS_CONFIG = {
             "Do not pay processing fees to independent welfare allocation channels.",
             "Verify all notifications directly at clean secure government domains ending strictly in `.gov.in`."
         ],
-        "helpline": "1930",
-        "online_url": "https://cybercrime.gov.in",
+        "helpline": _CYBER_HELPLINE,
+        "online_url": _CYBER_PORTAL,
         "template": (
             "Government scheme allocation forgery encountered on {date}. "
             "Perpetrators mapped false direct benefit structures to collect administrative setup payments up front.\n"
@@ -167,8 +190,8 @@ ACTIONS_CONFIG = {
             "Perform direct verification of the claim from official public directory configurations before proceeding.",
             "Consult a university authority or trust node before signing digital contracts."
         ],
-        "helpline": "1930",
-        "online_url": "https://cybercrime.gov.in",
+        "helpline": _CYBER_HELPLINE,
+        "online_url": _CYBER_PORTAL,
         "template": (
             "Logging suspicious text sequence interaction audit on {date}. "
             "Text contains anomaly clusters indicating potential social engineering patterns.\n"
